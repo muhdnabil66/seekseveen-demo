@@ -6,14 +6,24 @@
     <title>Checkout | SeekSeveen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --brand-red: #980002; --glass-bg: rgba(15, 15, 15, 0.7); --glass-blur: blur(20px); }
+        :root { 
+            --brand-red: #980002; 
+            --glass-bg: rgba(15, 15, 15, 0.7); 
+            --glass-blur: blur(20px); 
+        }
         @font-face { font-family: 'Another Danger'; src: url('Another Danger Slanted - Demo.otf') format('opentype'); }
         
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background: url('horizon.jpg') no-repeat center fixed; background-size: cover; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Glass Header & Footer */
-        .navbar, footer { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; }
-        footer { border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; text-align: center; padding: 40px; }
+        /* Glass Header & Footer Applied */
+        .navbar, footer { 
+            background: var(--glass-bg) !important; 
+            backdrop-filter: var(--glass-blur) !important; 
+            -webkit-backdrop-filter: var(--glass-blur) !important; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            padding: 15px 20px; 
+        }
+        footer { border-top: 1px solid rgba(255,255,255,0.1); border-bottom: none; margin-top: auto; text-align: center; padding: 40px; }
 
         .footer-links { margin-bottom: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
         .footer-links a { color: #fff; text-decoration: none; font-size: 13px; transition: 0.3s; }
@@ -78,12 +88,12 @@
                 <div class="input-group">
                     <label>Phone Number</label>
                     <div class="phone-input-wrap">
-                        <select id="country-code" style="width: 120px;" onchange="toggleOther(this)">
+                        <select id="country-code" style="width: 120px;" onchange="toggleOther(this); updatePhoneLimit()">
                             <option value="+60">MY +60</option>
                             <option value="other">OTHER</option>
                         </select>
                         <input type="text" id="other-code" placeholder="Code" style="display:none; width: 80px;" maxlength="4" oninput="formatCountryCode(this)">
-                        <input type="text" id="phone" placeholder="123456789" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        <input type="text" id="phone" placeholder="123456789" maxlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                     </div>
                 </div>
             </div>
@@ -151,7 +161,7 @@
     </footer>
 
     <script>
-        const MASTER_KEY = "SeekSeveen_Master_v1.0.0.0.0.0.0.3.9";
+        const MASTER_KEY = "SeekSeveen_Master_v1.0.0.0.0.0.0.5.9";
         const categories = [
             { name: "Standard", price: 499 }, { name: "Bronze", price: 699 }, 
             { name: "Silver", price: 999 }, { name: "Gold", price: 1699 },
@@ -176,6 +186,21 @@
 
         function toggleOther(select) {
             document.getElementById('other-code').style.display = (select.value === 'other') ? 'block' : 'none';
+        }
+
+        // New function to update limit dynamically
+        function updatePhoneLimit() {
+            const select = document.getElementById('country-code');
+            const phoneInput = document.getElementById('phone');
+            if (select.value === '+60') {
+                phoneInput.maxLength = 9;
+            } else {
+                phoneInput.maxLength = 10;
+            }
+            // Clear if already over limit when switching
+            if (phoneInput.value.length > phoneInput.maxLength) {
+                phoneInput.value = phoneInput.value.substring(0, phoneInput.maxLength);
+            }
         }
 
         function triggerError(msg) {
@@ -209,6 +234,7 @@
                 total -= 50;
             }
             document.getElementById('sum-total').innerText = "RM " + total;
+            updatePhoneLimit();
         }
 
         function handlePayment() {
@@ -218,8 +244,12 @@
             const countryChoice = document.getElementById('country-code').value;
             const otherCode = document.getElementById('other-code').value;
 
-            if(!name || !email || phone.length < 10 || (countryChoice === 'other' && otherCode.length < 2)) {
-                triggerError("Please fill all details correctly. If there any issue contact us help.und2@gmail.com or visit www.seekseveen.com.my/bmthkl/ticket.");
+            // Validate specific limits
+            const isMY = (countryChoice === '+60');
+            const requiredLen = isMY ? 9 : 10;
+
+            if(!name || !email || phone.length !== requiredLen || (countryChoice === 'other' && otherCode.length < 2)) {
+                triggerError(`Please enter a valid ${requiredLen}-digit phone number for this country.`);
                 return;
             }
 
