@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | SeekSeveen</title>
+    <link rel="icon" type="image/png" href="bmthrednobg2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(15, 15, 15, 0.85);
+            --glass-blur: blur(10px);
+            --text-light: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('horizon.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* GLASS HEADER */
+        .navbar {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* POPUP MESSAGE */
+        #success-popup {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 128, 0, 0.95);
+            border: 1px solid white;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            z-index: 9999;
+            display: none;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* AUTH CARD */
+        .auth-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .auth-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid var(--brand-red);
+            padding: 30px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(152, 0, 2, 0.3);
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            color: var(--brand-red);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        /* Email Wrapper for @gmail.com */
+        .email-wrapper {
+            display: flex;
+            align-items: center;
+            background: #111;
+            border: 1px solid #444;
+            border-radius: 5px;
+        }
+
+        .email-wrapper input {
+            border: none !important;
+            flex: 1;
+            padding: 12px;
+            background: transparent !important;
+            color: white;
+        }
+
+        .email-suffix {
+            padding-right: 12px;
+            color: #888;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .input-group input:not([type="checkbox"]) {
+            width: 100%;
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #111;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .hint {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .error-msg {
+            color: #ff4d4d;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+            font-weight: bold;
+        }
+
+        /* CHECKBOXES */
+        .check-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        .check-group a {
+            color: var(--brand-red);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--brand-red);
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .auth-btn:hover {
+            background: white;
+            color: var(--brand-red);
+        }
+
+        /* GLASS FOOTER */
+        footer {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 40px 20px;
+            text-align: center;
+            margin-top: auto;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-nav a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="success-popup">Account created successfully! You will be directed to login page.</div>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" alt="SEEKSEVEEN" style="height:40px;"></a>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-card" id="auth-card">
+            <h2>Sign Up</h2>
+            
+            <form id="signupForm">
+                <div class="input-group">
+                    <label>Username</label>
+                    <input type="text" id="username" required placeholder="Enter username" 
+                           pattern="[A-Za-z0-9]{6,8}" 
+                           oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                    <span class="hint">Must be 6-8 characters. No special characters.</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Email</label>
+                    <div class="email-wrapper">
+                        <input type="text" id="email" required placeholder="User email">
+                        <span class="email-suffix">@gmail.com</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Password" 
+                           oninput="this.value = this.value.replace(/[^A-Za-z0-9]/g, '')">
+                    <span class="hint">Numbers and letters only. No special characters.</span>
+                </div>
+
+                <div class="input-group">
+                    <label>Re-type Password</label>
+                    <input type="password" id="repassword" required placeholder="Confirm password">
+                    <span id="match-error" class="error-msg">Password does not match!</span>
+                </div>
+
+                <div class="check-group">
+                    <input type="checkbox" id="terms" required>
+                    <label>I have read <a href="terms.html" target="_blank">Term & Condition</a></label>
+                </div>
+
+                <div class="check-group" style="background: rgba(255,255,255,0.05); padding: 8px; border-radius: 4px; border: 1px solid #333;">
+                    <input type="checkbox" id="robot" required>
+                    <label>I'm not a robot</label>
+                </div>
+
+                <button type="submit" class="auth-btn">Sign Up Now</button>
+            </form>
+            <p style="margin-top: 20px; font-size: 14px; color: #888;">Already have an account? <a href="login.html" style="color: var(--brand-red); text-decoration: none;">Log In</a></p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-nav">
+            <a href="terms.html">Term & Condition</a>
+            <a href="help.html">Help & Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <p style="color:#888; margin-top: 15px;">&copy; 2026 Und Performance Group. All rights reserved.</p>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=help.und2@gmail.com" target="_blank" style="font-size: 24px; color: white; margin: 15px 0; display: inline-block;">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <div style="margin-top: 10px;">
+            <a href="https://www.instagram.com/und.performance">
+            <img src="undpfm.png" alt="UND" style="height:30px;"></a>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('signupForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const repass = document.getElementById('repassword').value;
+            const errorMsg = document.getElementById('match-error');
+
+            // 1. Password Match Validation
+            if (pass !== repass) {
+                errorMsg.style.display = 'block';
+                return;
+            } else {
+                errorMsg.style.display = 'none';
+            }
+
+            // 2. Save User to "All Users" List for the Login Page Profile View
+            let users = JSON.parse(localStorage.getItem('allUsers')) || [];
+            
+            // Check if username already exists
+            const existing = users.find(u => u.username === user);
+            if(existing) {
+                alert("Username already taken!");
+                return;
+            }
+
+            users.push({ 
+                username: user, 
+                password: pass, 
+                email: document.getElementById('email').value + "@gmail.com" 
+            });
+            
+            localStorage.setItem('allUsers', JSON.stringify(users));
+
+            // 3. Show Success Popup
+            const popup = document.getElementById('success-popup');
+            popup.style.display = 'block';
+
+            // 4. Update Layout to show "Success" message
+            document.getElementById('auth-card').innerHTML = `
+                <h2 style="color: #2ecc71;">Success!</h2>
+                <div style="padding: 20px 0;">
+                    <i class="fas fa-check-circle" style="font-size: 50px; color: #2ecc71; margin-bottom: 15px;"></i>
+                    <p style="font-size: 18px; line-height: 1.6;">Account created successfully!</p>
+                </div>
+            `;
+
+            // 5. Redirect after 5 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 5000);
+        };
+    </script>
+</body>
+</html>

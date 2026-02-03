@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In | SeekSeveen</title>
+    <link rel="icon" type="image/png" href="bmthrednobg2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(15, 15, 15, 0.85);
+            --glass-blur: blur(10px);
+        }
+
+        body {
+            margin: 0; font-family: Arial, sans-serif;
+            background-image: url('horizon.jpg'); background-size: cover;
+            background-attachment: fixed; background-position: center;
+            background-repeat: no-repeat; background-color: #000; color: white;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        /* GLASS HEADER */
+        .navbar { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 10px 20px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid rgba(255,255,255,0.1); }
+
+        .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
+        .auth-card {
+            background: rgba(0, 0, 0, 0.85); border: 2px solid var(--brand-red);
+            padding: 30px; border-radius: 15px; width: 100%; max-width: 400px;
+            box-shadow: 0 0 30px rgba(152, 0, 2, 0.3); text-align: center;
+            position: relative;
+        }
+        .auth-card h2 { color: var(--brand-red); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* PROFILE BOX */
+        .profile-box {
+            background: rgba(255,255,255,0.05); border: 2px solid #2ecc71; padding: 20px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: space-between;
+            background: rgba(46, 204, 113, 0.1); margin-bottom: 20px;
+        }
+        .profile-info { display: flex; align-items: center; gap: 15px; }
+        .profile-info i { font-size: 30px; color: #2ecc71; }
+        .tick-mark { color: #2ecc71; font-size: 20px; }
+
+        /* MANUAL FORM */
+        #manual-form { display: none; text-align: left; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
+        .input-group input { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #444; background: #111; color: white; box-sizing: border-box; }
+
+        /* BACK BUTTON */
+        #back-to-profile { 
+            display: none; color: #888; cursor: pointer; font-size: 12px; 
+            text-transform: uppercase; margin-bottom: 15px; transition: 0.3s;
+        }
+        #back-to-profile:hover { color: white; }
+
+        .auth-btn {
+            width: 100%; padding: 12px; background: var(--brand-red); color: white;
+            border: 1px solid white; border-radius: 5px; font-weight: bold;
+            cursor: pointer; text-transform: uppercase; transition: 0.3s; margin-top: 10px;
+        }
+        .auth-btn:hover { background: white; color: var(--brand-red); }
+
+        /* GLASS FOOTER (RECOVERED LOGO VERSION) */
+        footer { 
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 40px 20px; text-align: center; margin-top: auto; 
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-nav a { color: #fff; text-decoration: none; margin: 0 15px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" alt="SEEKSEVEEN" style="height:40px;"></a>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-card" id="auth-card">
+            <div id="back-to-profile" onclick="showProfileView()">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </div>
+
+            <h2 id="title-text">Select Profile</h2>
+            
+            <div id="profile-area">
+                </div>
+
+            <form id="loginForm">
+                <div id="manual-form">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="uName" placeholder="Enter username">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="uPass" placeholder="Enter password">
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 4px; border: 1px solid #333; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="robot" required>
+                    <label style="font-size: 13px;">I'm not a robot</label>
+                </div>
+
+                <button type="submit" class="auth-btn">Login</button>
+            </form>
+
+            <p id="switch-text" style="margin-top: 20px; font-size: 13px; color: #888;">
+                Switch account? <a href="#" onclick="showManual()" style="color:var(--brand-red); text-decoration: none;">Click here</a>
+            </p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-nav">
+            <a href="terms.html">Term & Condition</a>
+            <a href="help.html">Help & Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <p style="color:#888; margin-top: 15px;">&copy; 2026 Und Performance Group. All rights reserved.</p>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=help.und2@gmail.com" target="_blank" style="font-size: 24px; color: white; margin: 15px 0; display: inline-block;">
+            <i class="fas fa-envelope"></i>
+        </a>
+        <div style="margin-top: 10px;">
+            <a href="https://www.instagram.com/und.performance">
+                <img src="undpfm.png" alt="UND" style="height:30px;">
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        const users = JSON.parse(localStorage.getItem('allUsers')) || [];
+        const profileArea = document.getElementById('profile-area');
+        const manualForm = document.getElementById('manual-form');
+        const titleText = document.getElementById('title-text');
+        const backBtn = document.getElementById('back-to-profile');
+        const switchText = document.getElementById('switch-text');
+        let selectedUser = null;
+
+        window.onload = function() {
+            if (users.length > 0) {
+                showProfileView();
+            } else {
+                showManual();
+            }
+        };
+
+        function showProfileView() {
+            if (users.length > 0) {
+                const lastUser = users[users.length - 1];
+                selectedUser = lastUser;
+                profileArea.style.display = "block";
+                manualForm.style.display = "none";
+                backBtn.style.display = "none";
+                switchText.style.display = "block";
+                titleText.innerText = "Select Profile";
+
+                profileArea.innerHTML = `
+                    <div class="profile-box">
+                        <div class="profile-info">
+                            <i class="fas fa-user-circle"></i>
+                            <div style="text-align:left;">
+                                <span style="display:block; font-weight:bold;">${lastUser.username}</span>
+                                <span style="font-size:11px; color:#888;">Active Account</span>
+                            </div>
+                        </div>
+                        <i class="fas fa-check-circle tick-mark"></i>
+                    </div>
+                `;
+            }
+        }
+
+        function showManual() {
+            manualForm.style.display = "block";
+            profileArea.style.display = "none";
+            switchText.style.display = "none";
+            titleText.innerText = "Log In";
+            selectedUser = null;
+            // Only show back button if there are actually accounts to go back to
+            if (users.length > 0) {
+                backBtn.style.display = "inline-block";
+            }
+        }
+
+        document.getElementById('loginForm').onsubmit = function(e) {
+            e.preventDefault();
+            let userToLogin = selectedUser;
+
+            if (!userToLogin) {
+                const name = document.getElementById('uName').value;
+                const pass = document.getElementById('uPass').value;
+                userToLogin = users.find(u => u.username === name && u.password === pass);
+            }
+
+            if (userToLogin) {
+                localStorage.setItem('currentUser', userToLogin.username);
+                
+                document.getElementById('auth-card').innerHTML = `
+                    <h2 style="color: #2ecc71;">Login Successful!</h2>
+                    <div style="padding: 20px 0;">
+                        <i class="fas fa-user-check" style="font-size: 50px; color: #2ecc71; margin-bottom: 15px;"></i>
+                        <p style="font-size: 18px;">Login as <strong>${userToLogin.username}</strong></p>
+                        <p style="font-size: 14px; color:#888;">Redirecting...</p>
+                    </div>
+                `;
+                setTimeout(() => { window.location.href = 'index.html'; }, 3000);
+            } else {
+                alert("Account not found. Please check your details.");
+            }
+        };
+    </script>
+</body>
+</html>

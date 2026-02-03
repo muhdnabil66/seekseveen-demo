@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Und Performance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <style>
+        :root { 
+            --brand-red: #980002; 
+            --glass-bg: rgba(15, 15, 15, 0.7); 
+            --glass-blur: blur(20px); 
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: url('horizon.jpg') no-repeat center fixed;
+            background-size: cover;
+            margin: 0; padding: 0; color: #fff;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* Header */
+        .navbar { 
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
+            -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid rgba(255,255,255,0.1); 
+            padding: 15px 30px; display: grid; grid-template-columns: 100px 1fr 100px; align-items: center;
+        }
+
+        .header-logo { height: 40px; width: auto; object-fit: contain; cursor: pointer; transition: transform 0.2s; }
+        .header-logo:hover { transform: scale(1.05); }
+        .navbar h1 { margin: 0; font-size: 24px; letter-spacing: 2px; text-align: center; }
+
+        /* Footer & Copy Email */
+        footer { 
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
+            padding: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; 
+        }
+
+        .copy-email-box {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.05); padding: 8px 15px;
+            border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px; cursor: pointer; transition: 0.3s;
+        }
+        .copy-email-box:hover { background: rgba(255,255,255,0.1); border-color: var(--brand-red); }
+        .copy-email-box i { font-size: 14px; color: var(--brand-red); }
+        .copy-email-box span { font-size: 13px; color: #ccc; letter-spacing: 0.5px; }
+
+        /* Rest of the styles */
+        main {
+            max-width: 600px; margin: 50px auto; padding: 30px;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
+            border-radius: 20px; border: 1px solid var(--brand-red);
+        }
+
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 8px; font-size: 11px; color: #aaa; text-transform: uppercase; letter-spacing: 1px; }
+        input, textarea {
+            margin-bottom: 20px; padding: 12px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #444; border-radius: 8px; color: #fff; outline: none; transition: 0.3s;
+        }
+        input:focus, textarea:focus { border-color: var(--brand-red); }
+
+        button {
+            background-color: var(--brand-red); color: #fff; padding: 15px;
+            font-size: 16px; font-weight: bold; border: none; border-radius: 8px;
+            cursor: pointer; transition: 0.3s; text-transform: uppercase;
+        }
+
+        .overlay { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
+            backdrop-filter: blur(25px); display: none; 
+            flex-direction: column; justify-content: center; 
+            align-items: center; z-index: 9999; text-align: center; padding: 20px;
+        }
+
+        .feedback-card {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            padding: 40px; border-radius: 25px; max-width: 450px;
+        }
+
+        .stars { display: flex; gap: 10px; justify-content: center; font-size: 2rem; color: #333; cursor: pointer; margin: 20px 0; }
+        .stars i.active { color: #ffca08; text-shadow: 0 0 10px rgba(255, 202, 8, 0.5); }
+
+        .btn-green { background: #0f0; color: #000; margin: 20px auto 0 auto; width: 200px; }
+        .btn-no { background: transparent; color: #777; font-size: 13px; text-decoration: underline; margin-top: 15px; border: none; cursor: pointer; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .mini-spinner { border: 2px solid #333; border-top: 2px solid var(--brand-red); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; margin: 10px auto; }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="homepage.html" style="justify-self: start;">
+        <img src="sslogo.png" alt="SS Logo" class="header-logo">
+    </a>
+    <h1>SUPPORT</h1>
+    <a href="https://www.instagram.com/und.performance" target="_blank" style="justify-self: end;">
+        <img src="undpfm.png" alt="UND Logo" class="header-logo">
+    </a>
+</header>
+
+<main>
+    <h2 style="color: var(--brand-red); margin-top: 0;">Contact Us</h2>
+    <p style="font-size: 14px; color: #ccc; margin-bottom: 25px;">You will receive an auto-reply email after submitting your message.</p>
+    <form id="contactForm">
+        <label>Full Name</label>
+        <input type="text" id="name" name="from_name" required placeholder="Enter name">
+        <label>Email Address</label>
+        <input type="email" id="email" name="user_email" required placeholder="example@email.com">
+        <label>Message</label>
+        <textarea id="message" name="message" required placeholder="How can we help?"></textarea>
+        <button type="submit" id="sendBtn">Send Message</button>
+    </form>
+</main>
+
+<div id="loader" class="overlay">
+    <p style="letter-spacing: 3px; font-weight: bold;">SENDING...</p>
+</div>
+
+<div id="successOverlay" class="overlay">
+    <div class="feedback-card">
+        <i class="fas fa-check-circle" style="color: #0f0; font-size: 3rem; margin-bottom: 20px;"></i>
+        <h2 style="color: #fff; margin: 0;">MESSAGE SENT</h2>
+        <p style="color: #aaa; margin: 15px 0;">Your email has been sent to <b>help.und2@gmail.com</b>.<br><br>You will receive an auto-reply shortly. (Please do not reply to that email).</p>
+        <button class="btn-green" onclick="showRating()">OKAY</button>
+    </div>
+</div>
+
+<div id="ratingOverlay" class="overlay">
+    <div class="feedback-card">
+        <i class="fas fa-heart" style="color: var(--brand-red); font-size: 2.5rem; margin-bottom: 15px;"></i>
+        <h2 style="margin: 0; color: #fff;">THANK YOU FOR REACHING US</h2>
+        <p style="font-size: 14px; color: #aaa; margin: 15px 0;">Help us improve by rating our service. Your feedback is valuable to us.</p>
+        <div class="stars" id="starContainer">
+            <i class="fas fa-star" data-value="1"></i><i class="fas fa-star" data-value="2"></i>
+            <i class="fas fa-star" data-value="3"></i><i class="fas fa-star" data-value="4"></i>
+            <i class="fas fa-star" data-value="5"></i>
+        </div>
+        <div id="redirectSection" style="display: none;">
+            <div class="mini-spinner"></div>
+            <p style="font-size: 11px; color: #555;">Redirecting in <span id="timer">10</span>s...</p>
+        </div>
+        <button class="btn-green" id="rateOkBtn" style="display:none;" onclick="startRedirect()">OKAY</button>
+        <button class="btn-no" id="noThanks" onclick="startRedirect()">No, thanks</button>
+    </div>
+</div>
+
+<div id="errorOverlay" class="overlay">
+    <div class="feedback-card" style="border-color: var(--brand-red);">
+        <i class="fas fa-exclamation-triangle" style="color: var(--brand-red); font-size: 3rem; margin-bottom: 20px;"></i>
+        <h2 style="color: #fff; margin: 0;">INVALID EMAIL</h2>
+        <p id="errorMsg" style="color: #aaa; margin: 15px 0;">Please check your email spelling.</p>
+        <button onclick="closeError()" style="background: #444; width: 150px; padding: 10px; color: #fff; border:none; border-radius:8px; cursor:pointer;">TRY AGAIN</button>
+    </div>
+</div>
+
+<footer>
+    <div class="copy-email-box" id="copyBtn" onclick="copyEmail()">
+        <i class="fas fa-envelope" id="copyIcon"></i>
+        <span id="copyText">help.und2@gmail.com</span>
+    </div>
+    <br>
+    &copy; 2026 Und Performance Group. All Rights Reserved.
+</footer>
+
+<script>
+    const SERVICE_ID = "service_uowolix";
+    const TEMPLATE_ID = "template_p3rhohp";
+    const PUBLIC_KEY = "rYeUP18nvLoEZhmkf";
+
+    (function() { emailjs.init(PUBLIC_KEY); })();
+
+    // Copy Email Function
+    function copyEmail() {
+        const email = "help.und2@gmail.com";
+        const copyText = document.getElementById("copyText");
+        const copyIcon = document.getElementById("copyIcon");
+        
+        navigator.clipboard.writeText(email).then(() => {
+            copyText.innerText = "COPIED!";
+            copyText.style.color = "#0f0";
+            copyIcon.className = "fas fa-check";
+            copyIcon.style.color = "#0f0";
+            
+            setTimeout(() => {
+                copyText.innerText = email;
+                copyText.style.color = "#ccc";
+                copyIcon.className = "fas fa-envelope";
+                copyIcon.style.color = "var(--brand-red)";
+            }, 2000);
+        });
+    }
+
+    const stars = document.querySelectorAll('.stars i');
+    const rateOkBtn = document.getElementById('rateOkBtn');
+
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const val = this.getAttribute('data-value');
+            stars.forEach(s => s.classList.remove('active'));
+            for(let i=0; i<val; i++) { stars[i].classList.add('active'); }
+            rateOkBtn.style.display = 'block'; 
+        });
+    });
+
+    function showRating() {
+        document.getElementById('successOverlay').style.display = 'none';
+        document.getElementById('ratingOverlay').style.display = 'flex';
+    }
+
+    function closeError() { document.getElementById('errorOverlay').style.display = 'none'; }
+
+    function startRedirect() {
+        document.getElementById('rateOkBtn').style.display = 'none';
+        document.getElementById('noThanks').style.display = 'none';
+        document.getElementById('redirectSection').style.display = 'block';
+        let timeLeft = 10;
+        const countdown = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft;
+            if(timeLeft <= 0) { clearInterval(countdown); window.location.href = "homepage.html"; }
+        }, 1000);
+    }
+
+    document.getElementById('contactForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+        if (!emailPattern.test(email)) {
+            document.getElementById('errorOverlay').style.display = 'flex';
+            return;
+        }
+
+        const btn = document.getElementById('sendBtn');
+        const loader = document.getElementById('loader');
+        btn.disabled = true;
+        loader.style.display = 'flex';
+
+        emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, this)
+            .then(function() {
+                loader.style.display = 'none';
+                document.getElementById('successOverlay').style.display = 'flex';
+                document.getElementById('contactForm').reset();
+            }, function(error) {
+                loader.style.display = 'none';
+                btn.disabled = false;
+                document.getElementById('errorMsg').innerText = "Server Error. Please try again later.";
+                document.getElementById('errorOverlay').style.display = 'flex';
+            });
+    });
+</script>
+</body>
+</html>

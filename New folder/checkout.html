@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | SeekSeveen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(15, 15, 15, 0.8);
+            --glass-blur: blur(20px);
+            --text-light: #ffffff;
+        }
+
+        @font-face { font-family: 'Nightcore Demo'; src: url('Nightcore Demo.ttf'); }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: url('horizon.jpg') center/cover fixed no-repeat;
+            color: var(--text-light);
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        .nightcore { font-family: 'Nightcore Demo', Impact, sans-serif; text-transform: uppercase; letter-spacing: 2px; }
+
+        /* --- GLASS HEADER --- */
+        .navbar {
+            background: rgba(10, 10, 10, 0.4) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 2000;
+        }
+        .logo1 { height: 30px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; }
+
+        /* --- LAYOUT --- */
+        .checkout-container {
+            max-width: 1200px; margin: 30px auto;
+            display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; padding: 0 20px;
+        }
+
+        @media (max-width: 992px) {
+            .checkout-container { grid-template-columns: 1fr; }
+        }
+
+        .shipping-panel, .summary-panel {
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px;
+        }
+
+        .grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) { .grid-2-col { grid-template-columns: 1fr; } }
+
+        .form-group { margin-bottom: 15px; position: relative; }
+        label { display: block; margin-bottom: 6px; font-size: 11px; text-transform: uppercase; color: #aaa; font-weight: 600; }
+        
+        input, select {
+            width: 100%; padding: 12px; background: rgba(255,255,255,0.05);
+            border: 1px solid #333; border-radius: 8px; color: white; outline: none; box-sizing: border-box; transition: 0.3s;
+        }
+
+        select option {
+            background-color: #1a1a1a;
+            color: white;
+        }
+
+        input:focus, select:focus { border-color: var(--brand-red); background: rgba(255,255,255,0.1); }
+
+        #city-list {
+            position: absolute; top: 100%; left: 0; width: 100%; 
+            background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(15px);
+            border: 1px solid #333; border-radius: 8px; z-index: 100;
+            max-height: 200px; overflow-y: auto; display: none;
+        }
+        .city-item { padding: 10px 15px; cursor: pointer; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .city-item:hover { background: var(--brand-red); color: white; }
+
+        #checkout-list { 
+            max-height: 300px; overflow-y: auto; margin-bottom: 20px;
+            scrollbar-width: none; -ms-overflow-style: none;
+        }
+        #checkout-list::-webkit-scrollbar { display: none; }
+
+        .order-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .total-row { display: flex; justify-content: space-between; margin-top: 15px; font-size: 1.4rem; color: #00ff88; border-top: 1px solid #444; padding-top: 15px; }
+
+        .btn-pay { background: var(--brand-red); color: white; width: 100%; padding: 18px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-bottom: 10px; transition: 0.3s; }
+        .btn-pay:hover { background: #ff0000; box-shadow: 0 0 20px rgba(152,0,2,0.5); }
+        .btn-cancel { background: transparent; color: #888; width: 100%; padding: 12px; border: 1px solid #333; border-radius: 10px; cursor: pointer; transition: 0.3s; font-size: 12px; }
+
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #reminder-box { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(25px); border: 1px solid var(--brand-red); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; }
+
+        .receipt-container { background: white; color: #222; width: 100%; max-width: 480px; padding: 40px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; font-size: 13px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); overflow-y: auto; max-height: 90vh; }
+        .receipt-header { text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 20px; margin-bottom: 20px; }
+        .address-block { margin-bottom: 15px; line-height: 1.4; }
+        .label-tiny { font-size: 10px; color: #777; text-transform: uppercase; margin-bottom: 2px; }
+        .receipt-item { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
+        .receipt-img { width: 60px; height: 60px; object-fit: cover; background: #eee; border-radius: 4px; }
+
+        /* --- GLASS FOOTER --- */
+        footer {
+            background: rgba(10, 10, 10, 0.4) !important;
+            backdrop-filter: blur(15px) !important;
+            -webkit-backdrop-filter: blur(15px) !important;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+        .footer-nav a { color: #aaa; text-decoration: none; margin: 0 15px; font-size: 13px; }
+
+        .loader { border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--brand-red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media print {
+            body * { visibility: hidden; }
+            #receipt-overlay, #receipt-overlay * { visibility: visible; }
+            #receipt-overlay { position: absolute; left: 0; top: 0; width: 100%; background: white; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="reminder-overlay" class="overlay"><div id="reminder-box"><i class="fas fa-exclamation-circle" style="font-size: 40px; color: var(--brand-red); margin-bottom: 15px;"></i><h2 class="nightcore">Finish Your Order</h2><p id="reminder-text" style="color: #ccc;">Please complete all shipping details to secure your gear.</p><button class="btn-pay" style="margin-top:20px; padding: 12px;" onclick="closeReminder()">GOT IT</button></div></div>
+    <div id="loading-overlay" class="overlay"><div style="text-align: center;"><div class="loader" style="margin: 0 auto 20px;"></div><p class="nightcore">Processing Transaction...</p></div></div>
+    <div id="receipt-overlay" class="overlay"><div class="receipt-container" id="receipt-content"></div></div>
+    <div id="thanks-overlay" class="overlay" style="backdrop-filter: blur(40px);"><div style="text-align: center;"><h1 class="nightcore" style="color: var(--brand-red); font-size: 50px;">Thank You</h1><p>Your order is being prepared.</p><p id="countdown-text" style="font-size: 12px; color: #777; margin-top: 20px;">Redirecting in 15s...</p></div></div>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" class="logo1" alt="Logo"></a>
+        <nav class="nav-links"><a href="page4.html">Shop</a></nav>
+    </header>
+
+    <main class="checkout-container">
+        <section class="shipping-panel">
+            <form id="checkoutForm" autocomplete="off">
+                <h2 class="nightcore" style="color: var(--brand-red); margin-top: 0;">Shipping Information</h2>
+                <div class="grid-2-col">
+                    <div class="form-group"><label>First Name</label><input type="text" id="fName" placeholder="FIRST NAME" required oninput="this.value = this.value.toUpperCase()"></div>
+                    <div class="form-group"><label>Last Name</label><input type="text" id="lName" placeholder="LAST NAME" required oninput="this.value = this.value.toUpperCase()"></div>
+                </div>
+                <div class="form-group"><label>Phone Number</label><input type="text" id="uPhone" value="+60" maxlength="13" required oninput="handlePhone(this)"></div>
+                <div class="form-group"><label>Email Address (@gmail.com auto)</label><input type="text" id="uEmail" placeholder="username" maxlength="20" required onblur="handleEmail(this)"></div>
+                <div class="form-group"><label>Shipping Address</label><input type="text" id="address" placeholder="UNIT / STREET / AREA" required oninput="this.value = this.value.toUpperCase()"></div>
+                
+                <div class="form-group">
+                    <label>City / District (Searchable)</label>
+                    <input type="text" id="cityInput" placeholder="Start typing your city..." required oninput="filterCities()" onfocus="showCities()">
+                    <div id="city-list"></div>
+                </div>
+
+                <div class="grid-2-col">
+                    <div class="form-group">
+                        <label>State</label>
+                        <select id="state" required>
+                            <option value="" disabled selected>SELECT STATE</option>
+                            <option value="JOHOR">JOHOR</option><option value="KEDAH">KEDAH</option><option value="KELANTAN">KELANTAN</option><option value="MELAKA">MELAKA</option><option value="NEGERI SEMBILAN">NEGERI SEMBILAN</option><option value="PAHANG">PAHANG</option><option value="PENANG">PENANG</option><option value="PERAK">PERAK</option><option value="PERLIS">PERLIS</option><option value="SABAH">SABAH</option><option value="SARAWAK">SARAWAK</option><option value="SELANGOR">SELANGOR</option><option value="TERENGGANU">TERENGGANU</option><option value="W.P. KUALA LUMPUR">W.P. KUALA LUMPUR</option><option value="W.P. LABUAN">W.P. LABUAN</option><option value="W.P. PUTRAJAYA">W.P. PUTRAJAYA</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>Postcode</label><input type="text" id="postcode" placeholder="00000" maxlength="5" required oninput="this.value = this.value.replace(/[^0-9]/g, '')"></div>
+                </div>
+            </form>
+        </section>
+
+        <aside class="summary-panel">
+            <h2 class="nightcore" style="margin-top:0;">Your Cart</h2>
+            <div id="checkout-list"></div>
+            <div style="margin-top: 20px;">
+                <div style="display:flex; justify-content:space-between; color:#888; font-size:13px; margin-bottom:8px;"><span>Subtotal</span><span id="subtotal">RM 0.00</span></div>
+                <div class="total-row"><span class="nightcore">Total</span><span id="final-total">RM 0.00</span></div>
+                <div style="margin-top: 25px;">
+                    <button class="btn-pay" onclick="validateAndPlaceOrder()">PLACE ORDER NOW</button>
+                    <button class="btn-cancel" onclick="location.href='page4.html'">Return to Shop</button>
+                </div>
+            </div>
+        </aside>
+    </main>
+
+    <footer>
+        <div class="footer-nav"><a href="terms.html">Terms & Condition</a><a href="help.html">Help & Support</a><a href="privacy.html">Privacy Policy</a></div>
+        <p style="color:#666; font-size:11px;">&copy; 2026 SeekSeveen Performance Group. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const cities = ["Johor Bahru", "Batu Pahat", "Muar", "Kluang", "Segamat", "Pontian", "Kota Tinggi", "Mersing", "Kulai", "Tangkak", "Pasir Gudang", "Melaka Tengah", "Alor Gajah", "Jasin", "Seremban", "Port Dickson", "Jempol", "Tampin", "Kuala Pilah", "Rembau", "Jelebu", "Petaling", "Hulu Langat", "Klang", "Gombak", "Kuala Langat", "Sepang", "Hulu Selangor", "Kuala Selangor", "Sabak Bernam", "Kinta", "Larut Matang dan Selama", "Manjung", "Hilir Perak", "Batang Padang", "Kuala Kangsar", "Kerian", "Hulu Perak", "Perak Tengah", "Kampar", "Muallim", "Bagan Datuk", "Timur Laut", "Barat Daya", "Seberang Perai Utara", "Seberang Perai Tengah", "Seberang Perai Selatan", "Kota Setar", "Kubang Pasu", "Padang Terap", "Langkawi", "Pendang", "Kuala Muda", "Yan", "Sik", "Baling", "Kulim", "Bandar Baharu", "Pokok Sena", "Perlis", "Kota Bharu", "Pasir Mas", "Tumpat", "Bachok", "Tanah Merah", "Machang", "Pasir Puteh", "Kuala Krai", "Gua Musang", "Jeli", "Lojing", "Kuala Terengganu", "Dungun", "Kemaman", "Besut", "Marang", "Hulu Terengganu", "Setiu", "Kuantan", "Temerloh", "Bentong", "Pekan", "Raub", "Jerantut", "Lipis", "Bera", "Rompin", "Maran", "Cameron Highlands", "Kota Kinabalu", "Penampang", "Putatan", "Papar", "Tuaran", "Kota Belud", "Kudat", "Ranau", "Sandakan", "Kinabatangan", "Beluran", "Lahad Datu", "Tawau", "Semporna", "Kunak", "Tongod", "Telupid", "Keningau", "Tambunan", "Tenom", "Beaufort", "Kuala Penyu", "Sipitang", "Nabawan", "Kalabakan", "Pitas", "Kuching", "Lundu", "Bau", "Samarahan", "Asajaya", "Serian", "Sri Aman", "Lubok Antu", "Betong", "Saratok", "Pusa", "Sarikei", "Meradong", "Julau", "Sibu", "Selangau", "Kanowit", "Mukah", "Dalat", "Matu", "Daro", "Bintulu", "Tatau", "Sebauh", "Miri", "Subis", "Marudi", "Beluru", "Limbang", "Lawas", "Song", "Kapit"];
+
+        function showCities() {
+            const list = document.getElementById('city-list');
+            list.style.display = 'block';
+            if (!list.innerHTML) filterCities();
+        }
+
+        function filterCities() {
+            const input = document.getElementById('cityInput').value.toUpperCase();
+            const list = document.getElementById('city-list');
+            const filtered = cities.filter(city => city.toUpperCase().includes(input));
+            
+            list.innerHTML = filtered.map(city => `<div class="city-item" onclick="selectCity('${city}')">${city.toUpperCase()}</div>`).join('');
+            list.style.display = filtered.length ? 'block' : 'none';
+        }
+
+        function selectCity(city) {
+            document.getElementById('cityInput').value = city.toUpperCase();
+            document.getElementById('city-list').style.display = 'none';
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.form-group')) document.getElementById('city-list').style.display = 'none';
+        });
+
+        // UPDATED: Phone logic (+60 + 9 digits = 12 characters total, or 13 if spacing is considered)
+        function handlePhone(input) { 
+            if (!input.value.startsWith('+60')) {
+                input.value = '+60';
+            } 
+            // Only allows +60 followed by up to 9 digits (total 12 characters including +60)
+            let digitsOnly = input.value.substring(3).replace(/[^0-9]/g, '');
+            input.value = '+60' + digitsOnly.substring(0, 9); 
+        }
+
+        function handleEmail(input) { if (input.value && !input.value.includes('@')) { input.value = input.value.trim() + "@gmail.com"; } }
+        function closeReminder() { document.getElementById('reminder-overlay').style.display = 'none'; }
+
+        function validateAndPlaceOrder() {
+            const form = document.getElementById('checkoutForm');
+            const cityValue = document.getElementById('cityInput').value.trim().toUpperCase();
+            const upperCities = cities.map(c => c.toUpperCase());
+            
+            if (!form.checkValidity()) {
+                document.getElementById('reminder-text').innerText = "Please fill in all the required fields.";
+                document.getElementById('reminder-overlay').style.display = 'flex';
+                return;
+            }
+
+            if (!upperCities.includes(cityValue)) {
+                document.getElementById('reminder-text').innerText = "Please select a valid city from the list.";
+                document.getElementById('reminder-overlay').style.display = 'flex';
+                return;
+            }
+
+            placeOrder();
+        }
+
+        function loadCheckout() {
+            const cartData = JSON.parse(localStorage.getItem('bmth_cart')) || [];
+            const container = document.getElementById('checkout-list');
+            let total = 0;
+            if(cartData.length === 0) { container.innerHTML = "<p style='color:#666; text-align:center; padding:20px;'>Cart is empty.</p>"; return; }
+            container.innerHTML = '';
+            cartData.forEach(item => {
+                const itemTotal = item.price * item.q;
+                total += itemTotal;
+                container.innerHTML += `<div class="order-item"><div style="display: flex; align-items: center; gap: 12px;"><img src="${item.img}" width="45" height="45" style="border-radius:6px; object-fit: cover; background: #000;"><div><div style="font-weight:bold; font-size:12px;">${item.name}</div><div style="font-size:10px; color: var(--brand-red);">SZ: ${item.size || 'N/A'} | QTY: ${item.q}</div></div></div><div style="font-weight:bold; font-size:13px;">RM ${itemTotal.toFixed(2)}</div></div>`;
+            });
+            document.getElementById('subtotal').innerText = 'RM ' + total.toFixed(2);
+            document.getElementById('final-total').innerText = 'RM ' + total.toFixed(2);
+        }
+
+        function placeOrder() { document.getElementById('loading-overlay').style.display = 'flex'; setTimeout(() => { document.getElementById('loading-overlay').style.display = 'none'; generateReceipt(); }, 3000); }
+
+        function generateReceipt() {
+            const cart = JSON.parse(localStorage.getItem('bmth_cart')) || [];
+            const orderID = "SSV-" + Math.floor(100000 + Math.random() * 900000);
+            let total = 0;
+            let itemsHtml = cart.map(item => { total += (item.price * item.q); return `<div class="receipt-item"><img src="${item.img}" class="receipt-img"><div style="flex:1"><div style="font-weight:bold">${item.name}</div><div>Size: ${item.size || 'N/A'} x ${item.q}</div></div><div>RM ${(item.price * item.q).toFixed(2)}</div></div>`; }).join('');
+
+            // UPDATED: Seller address
+            document.getElementById('receipt-content').innerHTML = `
+                <div class="receipt-header"><img src="sslogo.png" style="height:30px; filter:brightness(0); margin-bottom:10px;"><div>OFFICIAL INVOICE</div><div>${orderID}</div></div>
+                <div class="address-block"><div class="label-tiny">Seller:</div><strong>SEEKSEVEEN (M) SDN. BHD.</strong><br>No. 12, Jalan Perindustrian Bayan Lepas,<br>Kawasan Perindustrian Bayan Lepas,<br>11900 Bayan Lepas,<br>Pulau Pinang, Malaysia.</div>
+                <div class="address-block"><div class="label-tiny">Ship To:</div><strong>${document.getElementById('fName').value} ${document.getElementById('lName').value}</strong><br>${document.getElementById('uPhone').value}<br>${document.getElementById('address').value},<br>${document.getElementById('cityInput').value},<br>${document.getElementById('postcode').value} ${document.getElementById('state').value}, MALAYSIA.</div>
+                <div style="border-top: 1px solid #eee; padding-top:15px;">${itemsHtml}</div>
+                <div style="border-top: 2px solid #222; margin-top:10px; padding:10px 0;"><div style="display:flex; justify-content:space-between; font-weight:bold; font-size:16px;"><span>TOTAL PAID</span><span>RM ${total.toFixed(2)}</span></div></div>
+                <div style="font-size:10px; text-align:center; margin-top:20px;"><button class="btn-pay no-print" onclick="window.print()" style="background:#222;">PRINT</button><button class="btn-cancel no-print" onclick="showThanks()">CONTINUE</button></div>`;
+            document.getElementById('receipt-overlay').style.display = 'flex';
+        }
+
+        function showThanks() {
+            document.getElementById('receipt-overlay').style.display = 'none';
+            document.getElementById('thanks-overlay').style.display = 'flex';
+            let sec = 15;
+            const timer = setInterval(() => {
+                sec--; document.getElementById('countdown-text').innerText = `Redirecting in ${sec}s...`;
+                if(sec <= 0) { clearInterval(timer); localStorage.removeItem('bmth_cart'); window.location.href = "page4.html"; }
+            }, 1000);
+        }
+        loadCheckout();
+    </script>
+</body>
+</html>
