@@ -18,18 +18,18 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: url('horizon.jpg') center/cover fixed no-repeat;
+            background: url('bgtest.gif') center/cover fixed no-repeat;
             color: var(--text-light);
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
         .nightcore { font-family: 'Nightcore Demo', Impact, sans-serif; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* --- GLASS HEADER --- */
+        /* --- GLASS HEADER (As per requested instructions) --- */
         .navbar {
-            background: rgba(10, 10, 10, 0.4) !important;
-            backdrop-filter: blur(15px) !important;
-            -webkit-backdrop-filter: blur(15px) !important;
+            background: rgba(15, 15, 15, 0.7) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 5%;
             display: flex; justify-content: space-between; align-items: center;
@@ -103,11 +103,11 @@
         .receipt-item { display: flex; gap: 15px; margin-bottom: 15px; align-items: center; }
         .receipt-img { width: 60px; height: 60px; object-fit: cover; background: #eee; border-radius: 4px; }
 
-        /* --- GLASS FOOTER --- */
+        /* --- GLASS FOOTER (As per requested instructions) --- */
         footer {
-            background: rgba(10, 10, 10, 0.4) !important;
-            backdrop-filter: blur(15px) !important;
-            -webkit-backdrop-filter: blur(15px) !important;
+            background: rgba(15, 15, 15, 0.7) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
             padding: 40px 20px;
             text-align: center;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -215,12 +215,10 @@
             if (!e.target.closest('.form-group')) document.getElementById('city-list').style.display = 'none';
         });
 
-        // UPDATED: Phone logic (+60 + 9 digits = 12 characters total, or 13 if spacing is considered)
         function handlePhone(input) { 
             if (!input.value.startsWith('+60')) {
                 input.value = '+60';
             } 
-            // Only allows +60 followed by up to 9 digits (total 12 characters including +60)
             let digitsOnly = input.value.substring(3).replace(/[^0-9]/g, '');
             input.value = '+60' + digitsOnly.substring(0, 9); 
         }
@@ -269,9 +267,29 @@
             const cart = JSON.parse(localStorage.getItem('bmth_cart')) || [];
             const orderID = "SSV-" + Math.floor(100000 + Math.random() * 900000);
             let total = 0;
-            let itemsHtml = cart.map(item => { total += (item.price * item.q); return `<div class="receipt-item"><img src="${item.img}" class="receipt-img"><div style="flex:1"><div style="font-weight:bold">${item.name}</div><div>Size: ${item.size || 'N/A'} x ${item.q}</div></div><div>RM ${(item.price * item.q).toFixed(2)}</div></div>`; }).join('');
+            // --- ADD THIS SECTION HERE ---
+    const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+    const itemsSummary = cart.map(item => `${item.name} (x${item.q})`).join(', ');
+    
+    let itemsHtml = cart.map(item => { 
+        total += (item.price * item.q); 
+        return `<div class="receipt-item"><img src="${item.img}" class="receipt-img"><div style="flex:1"><div style="font-weight:bold">${item.name}</div><div>Size: ${item.size || 'N/A'} x ${item.q}</div></div><div>RM ${(item.price * item.q).toFixed(2)}</div></div>`; 
+    }).join('');
 
-            // UPDATED: Seller address
+    // Save to History
+    history.push({
+        type: "MERCHANDISE PURCHASE",
+        date: new Date().toLocaleString(),
+        details: `Order ID: ${orderID} - Items: ${itemsSummary}`,
+        total: total.toFixed(2)
+    });
+    localStorage.setItem('purchaseHistory', JSON.stringify(history));
+    // ------------------------------
+
+    // (Rest of your existing receipt HTML code...)
+    document.getElementById('receipt-content').innerHTML = `...`; 
+    document.getElementById('receipt-overlay').style.display = 'flex';
+
             document.getElementById('receipt-content').innerHTML = `
                 <div class="receipt-header"><img src="sslogo.png" style="height:30px; filter:brightness(0); margin-bottom:10px;"><div>OFFICIAL INVOICE</div><div>${orderID}</div></div>
                 <div class="address-block"><div class="label-tiny">Seller:</div><strong>SEEKSEVEEN (M) SDN. BHD.</strong><br>No. 12, Jalan Perindustrian Bayan Lepas,<br>Kawasan Perindustrian Bayan Lepas,<br>11900 Bayan Lepas,<br>Pulau Pinang, Malaysia.</div>
@@ -292,6 +310,22 @@
             }, 1000);
         }
         loadCheckout();
+
+// Add this logic to your 'Success' or 'Payment Complete' function
+function savePurchaseToHistory(type, details, total) {
+    const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+    
+    const newEntry = {
+        type: type, // e.g., "CONCERT TICKET" or "MERCHANDISE"
+        date: new Date().toLocaleString(),
+        details: details,
+        total: total
+    };
+    
+    history.push(newEntry);
+    localStorage.setItem('purchaseHistory', JSON.stringify(history));
+}
+
     </script>
 </body>
 </html>

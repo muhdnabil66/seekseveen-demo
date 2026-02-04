@@ -13,9 +13,9 @@
         }
         @font-face { font-family: 'Another Danger'; src: url('Another Danger Slanted - Demo.otf') format('opentype'); }
         
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: url('horizon.jpg') no-repeat center fixed; background-size: cover; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: url('bgtest.gif') no-repeat center fixed; background-size: cover; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Glass Header & Footer Applied */
+        /* Glass Header & Footer */
         .navbar, footer { 
             background: var(--glass-bg) !important; 
             backdrop-filter: var(--glass-blur) !important; 
@@ -128,7 +128,7 @@
         <div class="success-card">
             <i class="fas fa-check-circle" style="color:#0f0; font-size: 4rem; margin-bottom: 20px;"></i>
             <h2 style="margin: 0;">PAYMENT SUCCESS</h2>
-            <p style="color: #aaa; margin: 15px 0;">Your ticket was succesful delivered to your email.</p>
+            <p style="color: #aaa; margin: 15px 0;">Your ticket was successful delivered to your email.</p>
             <button class="btn-ok" onclick="showThanks()">OKAY</button>
         </div>
     </div>
@@ -143,11 +143,10 @@
             <p style="font-size: 13px; color: #ff4444; font-weight: bold; margin-top: 20px;">
                 IMPORTANT: DO NOT SHARE YOUR TICKET QR CODE.
             </p>
-            <p style="font-size: 11px; color: #777; margin-top: 10px; font-style: italic;">
-                "We shall not be responsible for, nor entertain, any data theft or security issues arising from individual negligence or personal factors."
+            <p style="font-size: 11px; color: #777; margin-top: 10px; font-style: italic;" id="countdown-text">
+                Redirecting in 15 seconds...
             </p>
             <div class="spinner" style="width: 30px; height: 30px; margin: 20px auto; border-width: 2px;"></div>
-            <p style="font-size: 10px; color: #555;">Redirecting in 15 seconds...</p>
         </div>
     </div>
 
@@ -161,7 +160,7 @@
     </footer>
 
     <script>
-        const MASTER_KEY = "SeekSeveen_Master_v1.0.0.0.0.0.0.5.9";
+        const MASTER_KEY = "SeekSeveen_Master_v1.0.0.0.0.0.3.9.9";
         const categories = [
             { name: "Standard", price: 499 }, { name: "Bronze", price: 699 }, 
             { name: "Silver", price: 999 }, { name: "Gold", price: 1699 },
@@ -188,16 +187,10 @@
             document.getElementById('other-code').style.display = (select.value === 'other') ? 'block' : 'none';
         }
 
-        // New function to update limit dynamically
         function updatePhoneLimit() {
             const select = document.getElementById('country-code');
             const phoneInput = document.getElementById('phone');
-            if (select.value === '+60') {
-                phoneInput.maxLength = 9;
-            } else {
-                phoneInput.maxLength = 10;
-            }
-            // Clear if already over limit when switching
+            phoneInput.maxLength = (select.value === '+60') ? 9 : 10;
             if (phoneInput.value.length > phoneInput.maxLength) {
                 phoneInput.value = phoneInput.value.substring(0, phoneInput.maxLength);
             }
@@ -207,11 +200,9 @@
             const box = document.getElementById('checkoutBox');
             const overlay = document.getElementById('errorOverlay');
             const text = document.getElementById('errorText');
-            
             text.innerText = msg;
             box.classList.add('apply-shake', 'error-glow');
             overlay.style.display = 'flex';
-
             setTimeout(() => {
                 box.classList.remove('apply-shake', 'error-glow');
                 overlay.style.display = 'none';
@@ -242,14 +233,11 @@
             const email = document.getElementById('email').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const countryChoice = document.getElementById('country-code').value;
-            const otherCode = document.getElementById('other-code').value;
 
-            // Validate specific limits
-            const isMY = (countryChoice === '+60');
-            const requiredLen = isMY ? 9 : 10;
+            const requiredLen = (countryChoice === '+60') ? 9 : 10;
 
-            if(!name || !email || phone.length !== requiredLen || (countryChoice === 'other' && otherCode.length < 2)) {
-                triggerError(`Please enter a valid ${requiredLen}-digit phone number for this country.`);
+            if(!name || !email || phone.length !== requiredLen) {
+                triggerError(`Please enter a valid ${requiredLen}-digit phone number.`);
                 return;
             }
 
@@ -264,14 +252,38 @@
             document.getElementById('success').style.display = 'none';
             document.getElementById('thanks').style.display = 'flex';
 
-            let data = JSON.parse(localStorage.getItem(MASTER_KEY));
+            // Safe master data update
+            let rawData = localStorage.getItem(MASTER_KEY);
+            let data = rawData ? JSON.parse(rawData) : {};
             data.userPurchased = true;
             data.purchasedCatId = localStorage.getItem("pending_cat");
             localStorage.setItem(MASTER_KEY, JSON.stringify(data));
 
-            setTimeout(() => { 
-                window.location.href = "page3.html"; 
-            }, 15000); 
+            // Record to purchase history
+            try {
+                const cat = categories[data.purchasedCatId] || { name: "Unknown" };
+                const totalVal = document.getElementById('sum-total').innerText.replace('RM ', '');
+                const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+                
+                history.push({
+                    type: "CONCERT TICKET",
+                    date: new Date().toLocaleString(),
+                    details: `Category: ${cat.name} Ticket - Kuala Lumpur`,
+                    total: totalVal
+                });
+                localStorage.setItem('purchaseHistory', JSON.stringify(history));
+            } catch (e) { console.log("History error:", e); }
+
+            // Redirection logic
+            let sec = 15;
+            const timer = setInterval(() => {
+                sec--;
+                document.getElementById('countdown-text').innerText = `Redirecting in ${sec}s...`;
+                if(sec <= 0) {
+                    clearInterval(timer);
+                    window.location.href = "page3.html";
+                }
+            }, 1000);
         }
 
         init();
