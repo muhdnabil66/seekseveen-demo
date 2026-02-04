@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Patch Notes | Und Performance</title>
+    <title>Patch Notes | Und Performance</title>
     <style>
         :root {
             --glass-bg: rgba(255, 255, 255, 0.07);
@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
-            background-color: #020617; 
+            background-color: #020617; /* Deep dark background */
             background-image: radial-gradient(circle at top right, #1e293b, #020617);
             color: var(--text-main);
             margin: 0;
@@ -25,7 +25,7 @@
             overflow-x: hidden;
         }
 
-        /* Glass Header & Footer */
+        /* Glass Header & Footer with blurring glass effect */
         header, footer {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
@@ -40,6 +40,17 @@
         }
         header { top: 0; border-top: none; }
         footer { bottom: 0; border-bottom: none; margin-top: auto; font-size: 0.85rem; }
+
+        /* Header Link Style */
+        .nav-link {
+            color: var(--text-main);
+            text-decoration: underline;
+            text-underline-offset: 4px;
+            transition: color 0.2s ease;
+        }
+        .nav-link:hover {
+            color: var(--accent);
+        }
 
         main {
             padding: 20px;
@@ -128,26 +139,37 @@
 <body>
 
 <header>
-    <strong>UND PERFORMANCE // RELEASE CENTER</strong>
+    <strong>UND PERFORMANCE // <a href="index.html" class="nav-link">RETURN TO HOME</a></strong>
 </header>
 
 <main>
-    <h2>Official Patch Notes</h2>
+    <h2>Patch Notes</h2>
 
     <div class="patch-container">
         <details open>
             <summary>
-                v1.0.0.0.0.5.9 <span class="date-tag">4 February 2026</span>
+                v1.0.7+build.20260204 <span class="date-tag">4 February 2026</span>
             </summary>
             <div class="patch-content">
-                <span class="section-title">🛠️ Patch Notes</span>
+                <span class="section-title">🔧 Navigation & Functions</span>
                 <ul>
-                    <li>✅ <strong>Improved Support Form</strong> – Enhanced user experience and fixed minor issues.</li>
-                    <li>💳 <strong>Payment Detail Fix</strong> – Corrected errors in ticket payment details.</li>
-                    <li>🔒 <strong>Security Feature Added</strong> – Implemented additional security measures for payment process.</li>
-                    <li>📝 <strong>Updated Notes</strong> – Revised system notes for clarity and accuracy.</li>
+                    <li>Repaired issues with the Contact button to ensure proper functionality and reliable user redirection.</li>
+                    <li>Updated system to the latest version for improved core performance.</li>
                 </ul>
-                <div class="dev-notes">Continuous optimization for a secure and stable platform.</div>
+                <span class="section-title">🎨 Visual Identity & Layout</span>
+                <ul>
+                    <li>Reallocated and optimized logo positioning for better layout consistency across all screen sizes.</li>
+                </ul>
+                <span class="section-title">🐞 Stability & Security</span>
+                <ul>
+                    <li>Fixed various minor and major bugs to improve overall performance and page load speeds.</li>
+                    <li>Enhanced and fixed security measures for safer user interactions.</li>
+                </ul>
+                <span class="section-title">🧪 Maintenance</span>
+                <ul>
+                    <li>Identified potential upcoming bugs for proactive maintenance and future fixes.</li>
+                </ul>
+                <div class="dev-notes">Continuous optimization for a safer and smoother experience.</div>
             </div>
         </details>
     </div>
