@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews | SEEKSEVEEN</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(10, 10, 10, 0.75);
+            --glass-blur: blur(15px);
+            --star-color: #ffca08;
+            --text-light: #ffffff;
+            --text-dim: #bbbbbb;
+        }
+
+        body {
+            margin: 0; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a url('bgtest.gif') no-repeat center center fixed;
+            background-size: cover; 
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glass Header & Footer */
+        header, footer {
+            background: var(--glass-bg) !important;
+            backdrop-filter: var(--glass-blur) !important;
+            -webkit-backdrop-filter: var(--glass-blur) !important;
+            padding: 20px; 
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+        }
+
+        footer { 
+            margin-top: auto; 
+            border-top: 1px solid rgba(255,255,255,0.1); 
+            border-bottom: none;
+        }
+
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; flex: 1; }
+
+        .back-btn {
+            color: var(--text-light); text-decoration: none; font-size: 14px;
+            display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;
+            transition: 0.3s; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px;
+        }
+        .back-btn:hover { background: var(--brand-red); }
+
+        .rating-summary {
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+            padding: 30px; border-radius: 15px; border: 1px solid rgba(152,0,2,0.4);
+            display: grid; grid-template-columns: 1fr 2fr; gap: 30px; align-items: center; margin-bottom: 30px;
+        }
+
+        .submit-review-box {
+            background: var(--glass-bg); backdrop-filter: var(--glass-blur);
+            padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px;
+        }
+
+        .input-field {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px; padding: 12px; color: white; font-family: inherit; margin-bottom: 12px; box-sizing: border-box;
+        }
+
+        .anon-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 13px; color: var(--text-dim); }
+        .star-input { display: flex; gap: 8px; margin: 10px 0; color: var(--star-color); cursor: pointer; font-size: 1.4rem; }
+        
+        .submit-btn {
+            background: var(--brand-red); color: white; border: none; padding: 12px 30px;
+            border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%;
+        }
+        .submit-btn:disabled { background: #444; color: #888; cursor: not-allowed; opacity: 0.6; }
+
+        .modal-btn-group { display: flex; gap: 15px; align-items: center; justify-content: center; margin-top: 20px; }
+        .skip-btn { background: transparent; color: var(--text-dim); border: none; cursor: pointer; font-size: 13px; text-decoration: underline; }
+
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85);
+            display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(8px);
+        }
+        .modal-content {
+            background: var(--glass-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--brand-red);
+            text-align: center; max-width: 400px; backdrop-filter: var(--glass-blur);
+        }
+
+        .big-rating h1 { font-size: 3.5rem; margin: 0; color: var(--brand-red); line-height: 1; }
+        .bar-container { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; font-size: 12px; }
+        .bar-bg { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--star-color); }
+        
+        .review-card {
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+            border-radius: 12px; padding: 20px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .reviewer-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .reviewer-name { font-weight: bold; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        .verified { color: #00ff88; font-size: 10px; font-weight: normal; }
+        .review-text { font-size: 14px; color: #ffffff; line-height: 1.6; font-style: italic; }
+        .review-date { font-size: 11px; color: var(--text-dim); margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; }
+
+        @media (max-width: 600px) { .rating-summary { grid-template-columns: 1fr; text-align: center; } }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="page4.html"><img src="sslogo.png" alt="SEEKSEVEEN" style="height:35px;"></a>
+</header>
+
+<div class="container">
+    <a href="page4.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Merch</a>
+
+    <div class="rating-summary" id="summary-box"></div>
+
+    <div class="submit-review-box" id="form-container">
+        <h3 style="margin-top:0; font-size:16px;">Leave a Review</h3>
+        <input type="text" id="user-name" class="input-field" placeholder="Your Name">
+        <div class="anon-wrapper">
+            <input type="checkbox" id="anon-toggle"> 
+            <label for="anon-toggle">Review Anonymously (e.g. R***)</label>
+        </div>
+        <div class="star-input" id="star-selector">
+            <i class="far fa-star" data-val="1"></i>
+            <i class="far fa-star" data-val="2"></i>
+            <i class="far fa-star" data-val="3"></i>
+            <i class="far fa-star" data-val="4"></i>
+            <i class="far fa-star" data-val="5"></i>
+        </div>
+        <textarea id="user-comment" class="input-field" rows="3" placeholder="Share your thoughts..."></textarea>
+        <button class="submit-btn" id="submit-button" onclick="processReview()" disabled>Submit Review</button>
+    </div>
+
+    <div id="reviews-list"></div>
+</div>
+
+<div class="modal-overlay" id="success-modal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle" style="color:#00ff88; font-size: 3rem; margin-bottom: 20px;"></i>
+        <h2>Thank you!</h2>
+        <p style="color: var(--text-dim);">Your review has been successfully submitted.</p>
+    </div>
+</div>
+
+<div class="modal-overlay" id="shop-rating-modal">
+    <div class="modal-content">
+        <i class="fas fa-store" style="color:var(--brand-red); font-size: 3rem; margin-bottom: 20px;"></i>
+        <h2>Rate our Shop?</h2>
+        <p style="color: var(--text-dim);">How was your overall experience?</p>
+        <div class="star-input" id="shop-star-selector" style="justify-content:center; margin-bottom:25px;">
+            <i class="far fa-star" data-val="1"></i>
+            <i class="far fa-star" data-val="2"></i>
+            <i class="far fa-star" data-val="3"></i>
+            <i class="far fa-star" data-val="4"></i>
+            <i class="far fa-star" data-val="5"></i>
+        </div>
+        <div class="modal-btn-group">
+            <button class="submit-btn" id="shop-submit-btn" onclick="closeAllModals()" style="width:auto;" disabled>Submit Rating</button>
+            <button class="skip-btn" onclick="closeAllModals()">No thanks</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p style="color:#aaa; font-size:11px; margin:0 0 10px 0;">© 2026 Und Performance Group. All Rights Reserved.</p>
+</footer>
+
+<script>
+    const products = [
+        { id: 1, name: 'NO LVE LIKE UR OWN LSLEEVE', rating: 4.2, reviewCount: 429, category: 'apparel' },
+        { id: 2, name: 'SEEKSEVEEN x BMTHKL', rating: 3.8, reviewCount: 56, category: 'apparel' },
+        { id: 3, name: 'DYING TO LIVE HOODIE', rating: 4.1, reviewCount: 440, category: 'apparel' },
+        { id: 4, name: 'SOF HOODIE', rating: 3.9, reviewCount: 45, category: 'apparel' },
+        { id: 5, name: 'DREAMSEEKER BEANIE', rating: 2.7, reviewCount: 749, category: 'accessory' },
+        { id: 6, name: 'YOUTOPIA CAMO CAP', rating: 4.3, reviewCount: 643, category: 'accessory' },
+        { id: 7, name: 'BMTH NECKLACE', rating: 3.3, reviewCount: 17, category: 'jewelry' },
+        { id: 8, name: 'ANOMALI BMTH', rating: 1.7, reviewCount: 932, category: 'collectible' }
+    ];
+
+    let currentInputRating = 0;
+    // CRITICAL FIX: Ensure ID is always valid or defaults to 1
+    const productId = localStorage.getItem('selected_rating_id') || 1;
+
+    document.getElementById('star-selector').addEventListener('click', (e) => {
+        if(e.target.dataset.val) {
+            currentInputRating = parseInt(e.target.dataset.val);
+            updateStars('star-selector', currentInputRating);
+            document.getElementById('submit-button').disabled = false;
+        }
+    });
+
+    document.getElementById('shop-star-selector').addEventListener('click', (e) => {
+        if(e.target.dataset.val) {
+            updateStars('shop-star-selector', parseInt(e.target.dataset.val));
+            document.getElementById('shop-submit-btn').disabled = false;
+        }
+    });
+
+    function updateStars(id, val) {
+        document.querySelectorAll(`#${id} i`).forEach((s, i) => {
+            s.classList.replace(i < val ? 'far' : 'fas', i < val ? 'fas' : 'far');
+        });
+    }
+
+    function closeAllModals() { 
+        document.getElementById('success-modal').style.display = 'none'; 
+        document.getElementById('shop-rating-modal').style.display = 'none'; 
+    }
+
+    function processReview() {
+        const comment = document.getElementById('user-comment').value;
+        let typedName = document.getElementById('user-name').value.trim() || "Guest";
+        const isAnon = document.getElementById('anon-toggle').checked;
+        let finalDisplayName = isAnon ? (typedName.charAt(0).toUpperCase() + "***") : typedName;
+
+        if(!comment) return alert("Please write a comment!");
+
+        const p = products.find(x => x.id == productId);
+        const detail = (p.category === 'apparel') ? "Size: L | Color: Black" : "One Size | Black";
+        
+        const reviewObj = { name: finalDisplayName, rating: currentInputRating, text: comment, date: "Today", detail, isUser: true };
+
+        // Save to LocalStorage with specific product key
+        let saved = JSON.parse(localStorage.getItem('user_reviews_' + productId)) || [];
+        saved.unshift(reviewObj);
+        localStorage.setItem('user_reviews_' + productId, JSON.stringify(saved));
+
+        renderReviews();
+        document.getElementById('form-container').style.display = 'none';
+        
+        document.getElementById('success-modal').style.display = 'flex';
+        setTimeout(() => {
+            document.getElementById('success-modal').style.display = 'none';
+            document.getElementById('shop-rating-modal').style.display = 'flex';
+        }, 3000);
+    }
+
+    function renderReviews() {
+        const p = products.find(x => x.id == productId);
+        const list = document.getElementById('reviews-list');
+        list.innerHTML = '';
+
+        // Load saved user reviews first
+        const saved = JSON.parse(localStorage.getItem('user_reviews_' + productId)) || [];
+        saved.forEach(rev => {
+            list.innerHTML += createReviewHTML(rev.name, rev.rating, rev.text, rev.date, rev.detail, true);
+        });
+
+        // Add standard mock reviews
+        const mocks = ["Top tier quality.", "Love the fit.", "Fast shipping!", "Fabric feels premium.", "Absolute fire."];
+        const names = ["Ahmad Z.", "Kevin L.", "Sarah M.", "Jason S.", "Nurul H."];
+        for(let i=0; i < 5; i++) {
+            list.innerHTML += createReviewHTML(names[i], 5, mocks[i], "20 Jan 2026", "L | Black", false);
+        }
+    }
+
+    function createReviewHTML(name, rating, text, date, detail, isUser) {
+        return `
+            <div class="review-card" ${isUser ? 'style="border-left: 3px solid var(--brand-red);"' : ''}>
+                <div class="reviewer-info">
+                    <div class="reviewer-name">${name} <span class="verified"><i class="fas fa-check-circle"></i> Verified</span></div>
+                    <div style="color:var(--star-color); font-size:11px;">${generateStars(rating)}</div>
+                </div>
+                <div class="review-text">"${text}"</div>
+                <div class="review-date">${date} | ${detail}</div>
+            </div>`;
+    }
+
+    function generateStars(r) {
+        let h = '';
+        for (let i = 1; i <= 5; i++) h += i <= Math.floor(r) ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+        return h;
+    }
+
+    function init() {
+        const p = products.find(x => x.id == productId);
+        if(!p) return; 
+
+        document.getElementById('summary-box').innerHTML = `
+            <div class="big-rating"><div style="text-align:center">
+                <h1>${p.rating.toFixed(1)}</h1>
+                <div style="color:var(--star-color); margin:10px 0;">${generateStars(p.rating)}</div>
+                <div style="font-size:12px; color:var(--text-dim);">${p.reviewCount} Ratings</div>
+            </div></div>
+            <div><h2 style="margin:0 0 15px 0; font-size:20px; text-transform:uppercase;">${p.name}</h2>
+            ${[5,4,3,2,1].map(i => `
+                <div class="bar-container">
+                    <span style="width:35px">${i} <i class="fas fa-star" style="font-size:10px;"></i></span>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${i*12}%"></div></div>
+                    <span style="width:30px; color:var(--text-dim); text-align:right;">${i*12}%</span>
+                </div>
+            `).join('')}
+            </div>
+        `;
+        renderReviews();
+    }
+
+    // Run init every time the page loads
+    window.onload = init;
+</script>
+
+</body>
+</html>
