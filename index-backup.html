@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bring Me The Horizon | SeekSeveen</title>
+    <link rel="icon" type="image/png" href="bmthrednobg2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(15, 15, 15, 0.7);
+            --glass-blur: blur(20px);
+            --text-light: #ffffff;
+        }
+
+        @font-face { font-family: 'Another Danger Slanted - Demo'; src: url('Another Danger Slanted - Demo.otf'); }    
+        @font-face { font-family: 'Nightcore Demo'; src: url('Nightcore Demo.ttf'); }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background-image: url('bgtest.gif');
+            background-size: cover; background-attachment: fixed; background-position: center;
+            background-color: #000; color: white; overflow-x: hidden;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
+
+        /* --- GLASS HEADER --- */
+        .navbar {
+            background: var(--glass-bg) !important;
+            backdrop-filter: var(--glass-blur) !important;
+            -webkit-backdrop-filter: var(--glass-blur) !important;
+            padding: 15px 30px; 
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 2000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .navbar img { height: 40px; width: auto; cursor: pointer; transition: transform 0.2s; }
+        .nav-right { display: flex; align-items: center; gap: 25px; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        .nav-links a:hover { color: var(--brand-red); }
+
+        .poster-box { display: flex; justify-content: center; align-items: center; width: 100%; padding: 20px 0; }
+
+        .history-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px); z-index: 6000;
+            display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+
+        /* --- PURCHASE HISTORY CLEAN SCROLL --- */
+        .history-content {
+            background: var(--glass-bg); border: 1px solid var(--brand-red);
+            padding: 30px; border-radius: 15px; width: 100%; max-width: 500px;
+            max-height: 80vh; overflow-y: auto; position: relative;
+            scrollbar-width: none; 
+        }
+        .history-content::-webkit-scrollbar { display: none; }
+
+        .history-item {
+            background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;
+            margin-bottom: 15px; border-left: 3px solid var(--brand-red);
+        }
+        .history-item h4 { margin: 0; color: var(--brand-red); font-size: 14px; text-transform: uppercase; }
+        .history-item p { margin: 5px 0 0; font-size: 12px; color: #ccc; }
+        .history-item .price { display: block; margin-top: 10px; font-weight: bold; color: #fff; }
+
+        .soundcheck-section { text-align: center; margin-bottom: 80px; }
+        audio { width: 100%; max-width: 500px; height: 40px; filter: invert(1); outline: none; }
+
+        .auth-btn { transition: all 0.3s ease; }
+        .auth-btn:hover { transform: scale(1.05); filter: brightness(1.2); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .auth-btn-signup:hover { box-shadow: 0 0 15px var(--brand-red); }
+
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: white; transition: 0.3s; }
+        @media (max-width: 992px) { .nav-links { display: none; } .hamburger { display: block; } }
+
+        .glow-hover { transition: 0.4s ease; cursor: pointer; border: 2px solid var(--brand-red); display: inline-block; line-height: 0; }
+        .glow-hover:hover { box-shadow: 0 0 30px var(--brand-red); filter: brightness(1.1); transform: scale(1.02); }
+
+        .sidebar {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(25px);
+            z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 20px; border-left: 2px solid var(--brand-red);
+        }
+        .sidebar h3 { font-family: 'Segoe UI', Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+        .sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3500; display: none; }
+        .sidebar-overlay.active { display: block; }
+
+        .hero { width: 100%; height: 100vh; background: url('bmthbanneryellow.png') no-repeat center center; background-size: cover; }
+        .section-title { font-family: 'Another Danger Slanted - Demo'; text-align: center; font-size: 40px; color: var(--brand-red); margin: 60px 0 30px; letter-spacing: 5px; }
+        .glass-box { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; max-width: 800px; margin: 0 auto 40px; text-align: center; }
+
+        .slider-container { width: 100%; overflow: hidden; padding: 20px 0; }
+        .slider-track { display: flex; gap: 20px; width: max-content; animation: scroll-infinite 15s linear infinite; }
+        @keyframes scroll-infinite { 0% { transform: translateX(0); } 100% { transform: translateX(-1080px); } }
+        .member-card { width: 250px; height: 350px; background: var(--glass-bg); backdrop-filter: var(--glass-blur); border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; text-align: center; transition: 0.4s; }
+        .member-card:hover { transform: translateY(-10px); border-color: var(--brand-red); box-shadow: 0 10px 20px rgba(152,0,2,0.3); }
+        .member-card img { width: 100%; height: 75%; object-fit: cover; }
+        .member-card h4 { margin: 10px 0 5px; font-family: 'Segoe UI', Arial, sans-serif; font-size: 20px; font-style: italic; font-weight: 700; letter-spacing: 1px; }
+
+        .material-grid { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 20px; margin-bottom: 40px; }
+        .material-item { width: 220px; padding: 25px; background: var(--glass-bg); border-radius: 10px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+        .material-item:hover { border-color: var(--brand-red); transform: translateY(-5px); box-shadow: 0 0 20px rgba(152,0,2,0.4); }
+
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-content { width: 100%; max-width: 800px; position: relative; text-align: center; }
+        
+        /* FIX: Prevent modal images from pushing the close button off-screen */
+        .modal-content img { max-height: 70vh; max-width: 100%; object-fit: contain; }
+
+        .horizontal-modal { display: flex; flex-direction: row; align-items: center; gap: 30px; text-align: left !important; max-width: 850px !important; position: relative; }
+        @media (max-width: 768px) { .horizontal-modal { flex-direction: column; text-align: center !important; } }
+
+        .info-trigger { color: #aaa; cursor: pointer; font-size: 14px; margin-left: 5px; transition: 0.3s; }
+        .info-trigger:hover { color: var(--brand-red); }
+        .ticketing-note-box { 
+            position: absolute; bottom: -80px; left: 50%; transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2); padding: 12px; border-radius: 8px;
+            width: 90%; color: #ff4d4d; font-size: 11px; text-align: center;
+            display: none; z-index: 10; line-height: 1.4; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .flip-card { width: 600px; height: 424px; max-width: 90vw; aspect-ratio: 2000 / 1414; perspective: 1500px; margin: 20px auto; transition: transform 0.4s ease; }
+        .flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s, box-shadow 0.4s; transform-style: preserve-3d; cursor: pointer; border-radius: 10px; border: 2px solid var(--brand-red); }
+        .flip-card.flipped .flip-inner { transform: rotateY(180deg); }
+        .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 8px; overflow: hidden; }
+        .flip-back { transform: rotateY(180deg); }
+        .flip-card:hover { transform: scale(1.02); }
+        .flip-card:hover .flip-inner { box-shadow: 0 0 30px var(--brand-red); }
+
+        .modal-btn { background: var(--brand-red); color: white; border: none; padding: 12px 25px; cursor: pointer; border-radius: 5px; font-weight: bold; transition: 0.3s; text-decoration: none; display: inline-block; font-size: 14px; }
+        .modal-btn:not(.btn-restricted):hover { background: #ff0000; box-shadow: 0 0 15px var(--brand-red); }
+        .btn-grey { background: #333; }
+        .btn-restricted { background: #444; cursor: not-allowed; opacity: 0.7; box-shadow: none !important; }
+
+        /* --- GLASS FOOTER --- */
+        footer {
+            background: var(--glass-bg) !important;
+            backdrop-filter: var(--glass-blur) !important;
+            -webkit-backdrop-filter: var(--glass-blur) !important;
+            padding: 40px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;
+        }
+        .footer-nav a { color: white !important; text-decoration: none !important; margin: 0 15px; font-size: 14px; transition: 0.3s; }
+        .footer-nav a:hover { color: var(--brand-red) !important; }
+
+        #center-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; border: 2px solid var(--brand-red); padding: 25px; z-index: 9999; display: none; text-align: center; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <div id="center-popup">PLEASE SIGN IN / SIGN UP TO ACCESS THIS FEATURE</div>
+    <div class="sidebar-overlay" id="overlay" onclick="closeSidebars()"></div>
+
+    <div id="historyModal" class="history-modal">
+        <div class="history-content">
+            <h2 style="font-family: 'Nightcore Demo'; color: var(--brand-red); margin-top: 0;">PURCHASE HISTORY</h2>
+            <div id="historyList"></div>
+            <button class="modal-btn" style="background:#333; margin-top: 20px; width: 100%;" onclick="closeHistory()">CLOSE</button>
+        </div>
+    </div>
+
+    <div id="mainSidebar" class="sidebar">
+        <h3 style="text-align: center; color: var(--brand-red);">MENU</h3>
+        <div style="display: flex; flex-direction: column; margin-top: 30px; gap: 15px;">
+            <a href="about.html" class="modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">About</a>
+            <a href="update.html" class="modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">Update</a>
+            <a href="page2.html" class="restricted modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">Map</a>
+            <a href="page3.html" class="restricted modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">Price</a>
+            <a href="page4.html" class="restricted modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">Shop</a>
+            <a href="help.html" class="modal-btn" style="background:none; text-align:left; border-bottom:1px solid #333;">Contact</a>
+        </div>
+    </div>
+
+    <div id="profileSidebar" class="sidebar">
+        <div style="text-align: center;">
+            <i class="fas fa-user-circle" style="font-size: 60px; color: var(--brand-red);"></i>
+            <h3 id="side-user">Guest</h3>
+        </div>
+        <div id="sidebar-content" style="margin-top: 30px; display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" alt="SEEKSEVEEN"></a>
+        <div class="nav-right">
+            <nav class="nav-links">
+                <a href="about.html">About</a>
+                <a href="update.html">Update</a>
+                <a href="page2.html" class="restricted">Map</a>
+                <a href="page3.html" class="restricted">Price</a>
+                <a href="page4.html" class="restricted">Shop</a>
+                <a href="help.html">Contact</a>
+            </nav>
+            <div style="display:flex; align-items: center; gap:15px;">
+                <div id="auth-links" style="display:flex; gap:10px;">
+                    <a href="login.html" class="auth-btn" style="border:1px solid #fff; padding:6px 12px; border-radius:4px; color:white; text-decoration:none; font-size:11px; font-weight:bold;">LOG IN</a>
+                    <a href="signup.html" class="auth-btn auth-btn-signup" style="background:var(--brand-red); padding:6px 12px; border-radius:4px; color:white; text-decoration:none; font-size:11px; font-weight:bold;">SIGN UP</a>
+                </div>
+                <span id="nav-user-display" style="display:none; font-weight:bold; font-size:12px;"></span>
+                <i class="fas fa-user-circle profile-trigger" onclick="openSidebar('profileSidebar')" style="font-size:24px; cursor:pointer;"></i>
+                <i class="fas fa-bars hamburger" onclick="openSidebar('mainSidebar')"></i>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero"></section>
+
+    <h2 class="section-title">THE EVENT</h2>
+    <div class="glass-box">
+        <p style="font-size: 18px; line-height: 1.6;">Experience the "Post Human" era live in Kuala Lumpur. Bring Me The Horizon returns for a monumental night at Stadium Bukit Jalil.</p>
+        <button class="modal-btn" onclick="openModal('eventModal')"><i class="fas fa-info-circle"></i> VIEW EVENT DETAILS</button>
+    </div>
+
+    <h2 class="section-title">BAND MEMBERS</h2>
+    <div class="slider-container">
+        <div class="slider-track">
+            <div class="member-card"><img src="olisykes.png"><h4>Oliver Sykes</h4><p>Vocals</p></div>
+            <div class="member-card"><img src="leemalia.png"><h4>Lee Malia</h4><p>Guitar</p></div>
+            <div class="member-card"><img src="mattkean.png"><h4>Matt Kean</h4><p>Bass</p></div>
+            <div class="member-card"><img src="mattnicholls.png"><h4>Matt Nicholls</h4><p>Drums</p></div>
+            <div class="member-card"><img src="olisykes.png"><h4>Oliver Sykes</h4><p>Vocals</p></div>
+            <div class="member-card"><img src="leemalia.png"><h4>Lee Malia</h4><p>Guitar</p></div>
+            <div class="member-card"><img src="mattkean.png"><h4>Matt Kean</h4><p>Bass</p></div>
+            <div class="member-card"><img src="mattnicholls.png"><h4>Matt Nicholls</h4><p>Drums</p></div>
+        </div>
+    </div>
+
+    <h2 class="section-title">OFFICIAL POSTER</h2>
+    <div class="poster-box" onclick="openModal('posterModal')">
+        <div class="glow-hover" style="border-radius: 10px;">
+            <img src="flyertest.png" alt="Concert Poster" style="width: 450px; max-width: 90vw; border-radius: 8px; display: block;">
+        </div>
+    </div>
+
+    <h2 class="section-title">FLYER & BROCHURE</h2>
+    <div class="material-grid">
+        <div class="material-item" onclick="openModal('flyerModal')">
+            <i class="fas fa-file-alt" style="font-size: 35px; color: var(--brand-red);"></i>
+            <h3>FLYER</h3>
+        </div>
+        <div class="material-item" onclick="openModal('brochureModal')">
+            <i class="fas fa-book-open" style="font-size: 35px; color: var(--brand-red);"></i>
+            <h3>BROCHURE</h3>
+        </div>
+    </div>
+
+    <h2 class="section-title">SOUNDCHECK - BMTH Drown</h2>
+    <div class="soundcheck-section">
+        <audio controls><source src="Bring Me The Horizon - Drown.mp3" type="audio/mpeg"></audio>
+    </div>
+
+    <footer>
+        <div class="footer-nav">
+            <a href="terms.html">Term & Condition</a>
+            <a href="help.html">Help & Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <p style="color:#777; margin-top:20px;">&copy; 2026 Und Performance Group. All rights reserved.</p>
+        <a href="help.html" style="color:white; font-size:24px; margin:15px 0; display:block;"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.instagram.com/und.performance" target="_blank"><img src="undpfm.png" style="height:40px;"></a>
+    </footer>
+
+    <div id="eventModal" class="modal">
+        <div class="glass-box horizontal-modal">
+            <div class="glow-hover" style="border-radius: 10px;"><img src="flyertest.png" style="width: 220px; border-radius: 8px; display: block;"></div>
+            <div>
+                <h2 style="font-family:'Another Danger Slanted - Demo'; font-size: 28px; color: var(--brand-red); margin-top:0;">CONCERT DETAILS <i class="fas fa-info-circle info-trigger" id="infoBtn"></i></h2>
+                <div id="ticketingNote" class="ticketing-note-box"><strong>NOTE:</strong> BMTHKL tickets are strictly limited to one (1) registered device only. Multiple purchases from the same device are not permitted.</div>
+                <div style="margin: 15px 0; font-size: 15px; line-height: 1.8;">
+                    <p><i class="fas fa-calendar-alt"></i> <strong>DATE:</strong> May 14, 2027</p>
+                    <p><i class="fas fa-map-marker-alt"></i> <strong>VENUE:</strong> Bukit Jalil National Stadium</p>
+                    <p><i class="fas fa-clock"></i> <strong>TIME:</strong> 9:00 PM</p>
+                    <p><i class="fas fa-ticket-alt"></i> <strong>TICKET:</strong> RM 499 - RM 6,999</p>
+                </div>
+                <div id="event-action-box" style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+                    <div style="display:flex; gap:10px;">
+                        <button class="modal-btn btn-restricted" onclick="showPopup()">BUY TICKETS NOW</button>
+                        <button class="modal-btn btn-grey" onclick="closeModal('eventModal')">CLOSE</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="posterModal" class="modal">
+        <div class="modal-content">
+            <div class="glow-hover" style="border-radius: 5px;"><img src="copyright.png"></div>
+            <div style="margin-top: 20px;"><button class="modal-btn btn-grey" onclick="closeModal('posterModal')">CLOSE</button></div>
+        </div>
+    </div>
+
+    <div id="flyerModal" class="modal">
+        <div class="modal-content">
+            <div class="glow-hover" style="border-radius: 5px;"><img src="flyertest.png"></div>
+            <div style="margin-top: 20px;"><button class="modal-btn btn-grey" onclick="closeModal('flyerModal')">CLOSE</button></div>
+        </div>
+    </div>
+
+    <div id="brochureModal" class="modal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="flip-card" id="bCard" onclick="this.classList.toggle('flipped')">
+                <div class="flip-inner">
+                    <div class="flip-front"><img src="brochuretest1.png" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div class="flip-back"><img src="brochuretest2.png" style="width:100%; height:100%; object-fit:cover;"></div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
+                <button class="modal-btn" onclick="event.stopPropagation(); document.getElementById('bCard').classList.toggle('flipped')"><i class="fas fa-sync"></i> FLIP</button>
+                <button class="modal-btn btn-grey" onclick="closeModal('brochureModal')">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const RESET_VERSION = "user_reset_v1.0.0.0.0.0.3.9.9"; 
+        if (localStorage.getItem("app_ver") !== RESET_VERSION) {
+            localStorage.clear(); localStorage.setItem("app_ver", RESET_VERSION); window.location.reload();
+        }
+
+        const user = localStorage.getItem('currentUser');
+        const infoBtn = document.getElementById('infoBtn');
+        const ticketingNote = document.getElementById('ticketingNote');
+
+        infoBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); ticketingNote.style.display = (ticketingNote.style.display === 'block') ? 'none' : 'block';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (ticketingNote.style.display === 'block' && e.target !== infoBtn && !ticketingNote.contains(e.target)) {
+                ticketingNote.style.display = 'none';
+            }
+        });
+
+        function openSidebar(id) { document.getElementById(id).classList.add('active'); document.getElementById('overlay').classList.add('active'); }
+        function closeSidebars() { document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('active')); document.getElementById('overlay').classList.remove('active'); }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; if(id === 'eventModal') ticketingNote.style.display = 'none'; }
+
+       function openHistory() {
+            const history = JSON.parse(localStorage.getItem('purchaseHistory') || '[]');
+            const currentUser = localStorage.getItem('currentUser');
+            const list = document.getElementById('historyList');
+
+            if (!currentUser) {
+                list.innerHTML = `<p style="text-align:center; color:#999; margin: 40px 0;">Please sign in to view history.</p>`;
+            } else if (history.length === 0) {
+                list.innerHTML = `<p style="text-align:center; color:#555; margin: 40px 0;">No history found for ${currentUser}.</p>`;
+            } else {
+                list.innerHTML = history.slice().reverse().map(item => `
+                    <div class="history-item">
+                        <h4>${item.type}</h4>
+                        <p style="font-size:10px; color:var(--brand-red);">${item.date}</p>
+                        <p>${item.details}</p>
+                        <span class="price">TOTAL: RM ${parseFloat(item.total).toFixed(2)}</span>
+                    </div>
+                `).join('');
+            }
+            document.getElementById('historyModal').style.display = 'flex';
+        }
+
+        function closeHistory() { document.getElementById('historyModal').style.display = 'none'; }
+        function showPopup() { const p = document.getElementById('center-popup'); p.style.display = 'block'; setTimeout(() => p.style.display = 'none', 3000); }
+
+        window.onload = function() {
+            const sidebarContent = document.getElementById('sidebar-content');
+            const authLinks = document.getElementById('auth-links');
+            const navUser = document.getElementById('nav-user-display');
+            const eventAction = document.getElementById('event-action-box');
+
+            if (user) {
+                authLinks.style.display = 'none'; navUser.style.display = 'inline'; navUser.innerText = user;
+                document.getElementById('side-user').innerText = user;
+                eventAction.innerHTML = `<div style="display:flex; gap:10px;"><a href="page3.html" class="modal-btn">BUY TICKETS NOW</a><button class="modal-btn btn-grey" onclick="closeModal('eventModal')">CLOSE</button></div>`;
+                sidebarContent.innerHTML = `<a href="#" class="modal-btn" style="text-align:left; background:none; border-bottom:1px solid #333;"><i class="fas fa-user"></i> Profile</a><a href="#" onclick="openHistory()" class="modal-btn" style="text-align:left; background:none; border-bottom:1px solid #333;"><i class="fas fa-history"></i> Purchase History</a><a href="#" onclick="localStorage.removeItem('currentUser'); location.reload();" style="color:var(--brand-red); font-weight:bold; margin-top:20px; padding:10px; text-decoration:none;">Sign Out</a>`;
+            } else {
+                sidebarContent.innerHTML = `<a href="login.html" class="modal-btn">Log In</a><a href="signup.html" class="modal-btn" style="background:var(--brand-red);">Sign Up</a>`;
+                document.querySelectorAll('.restricted').forEach(link => { link.style.color = '#555'; link.onclick = (e) => { e.preventDefault(); showPopup(); }; });
+            }
+        };
+
+        window.onclick = function(e) {
+            if (e.target.id === 'overlay') closeSidebars();
+            if (e.target.id === 'historyModal') closeHistory();
+            if (e.target.className === 'modal') e.target.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
