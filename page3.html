@@ -13,6 +13,8 @@
             --glass-blur: blur(20px);
             --text-light: #ffffff;
             --text-dim: #cccccc;
+            /* Glass Effect Variable */
+            --glass-black: rgba(0, 0, 0, 0.75);
         }
 
         @font-face {
@@ -30,11 +32,11 @@
             overflow-x: hidden;
         }
 
-        /* --- Glass Header & Footer --- */
+        /* --- PERSONALIZED GLASS HEADER --- */
         .navbar { 
-            background: var(--glass-bg) !important; 
-            backdrop-filter: var(--glass-blur) !important; 
-            -webkit-backdrop-filter: var(--glass-blur) !important; 
+            background: var(--glass-black) !important; 
+            backdrop-filter: blur(15px) saturate(180%) !important; 
+            -webkit-backdrop-filter: blur(15px) saturate(180%) !important; 
             padding: 15px 30px; 
             display: flex; justify-content: space-between; align-items: center; 
             position: sticky; top: 0; z-index: 2000;
@@ -104,9 +106,11 @@
         
         .msg-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); border: 2px solid var(--brand-red); padding: 40px; border-radius: 20px; z-index: 9999; display: none; text-align: center; backdrop-filter: blur(20px); width: 80%; max-width: 400px; }
 
+        /* --- PERSONALIZED GLASS FOOTER --- */
         footer { 
-            background: var(--glass-bg) !important; 
-            backdrop-filter: var(--glass-blur) !important; 
+            background: var(--glass-black) !important; 
+            backdrop-filter: blur(15px) saturate(180%) !important; 
+            -webkit-backdrop-filter: blur(15px) saturate(180%) !important; 
             border-top: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 40px 20px; text-align: center; margin-top: auto; 
         }
@@ -230,7 +234,8 @@
             document.getElementById('overlay').classList.remove('active');
         }
 
-        const MASTER_KEY = "SeekSeveen_Master_v1.0.0.0.0.0.3.9.9"; 
+        // UPDATED MASTER KEY FOR PERSISTENCE
+        const MASTER_KEY = "bmth_master_v4"; 
         const GLOBAL_LIMIT = 85000;
         const VOUCHER_MAX = 500;
         const VOUCHER_SPEED = 3000; 
@@ -240,12 +245,12 @@
         let selectedCatId = null;
 
         const categories = [
-            { id: 0, name: "Standard", price: 499, limit: 55000, minInc: 2, maxInc: 50, speed: 1000, img: "standard.png" },
+            { id: 0, name: "Standard", price: 499, limit: 55000, minInc: 2, maxInc: 50, speed: 100, img: "standard.png" },
             { id: 1, name: "Bronze",   price: 699, limit: 14750, minInc: 1, maxInc: 35, speed: 1000, img: "bronze.png" },
             { id: 2, name: "Silver",   price: 999, limit: 7000, minInc: 3, maxInc: 25, speed: 5000, img: "silver.png" },
-            { id: 3, name: "Gold",     price: 1699, limit: 5000, minInc: 5, maxInc: 15, speed: 4000, img: "gold.png" },
-            { id: 4, name: "Platinum", price: 2999, limit: 3000,  minInc: 2, maxInc: 8, speed: 9000, img: "platinum.png" },
-            { id: 5, name: "VIP",      price: 4999, limit: 200,   minInc: 1, maxInc: 3, speed: 2000, img: "vip.png" },
+            { id: 3, name: "Gold",     price: 1699, limit: 5000, minInc: 5, maxInc: 15, speed: 400, img: "gold.png" },
+            { id: 4, name: "Platinum", price: 2999, limit: 3000,  minInc: 2, maxInc: 8, speed: 900, img: "platinum.png" },
+            { id: 5, name: "VIP",      price: 4999, limit: 200,   minInc: 1, maxInc: 3, speed: 20000, img: "vip.png" },
             { id: 6, name: "VVIP",     price: 6999, limit: 50,    minInc: 1, maxInc: 2, speed: 15000, img: "vvip.png" },
             { id: 7, name: "VVVIP",    price: 0,    limit: 0,      minInc: 0, maxInc: 0, speed: 0,    img: "vvvip.png", locked: true }
         ];
@@ -361,10 +366,9 @@
                     buyBtn.style.display = 'none';
                 }
             } else if (data.catSold[id] >= cat.limit || data.totalSold >= GLOBAL_LIMIT) {
-                // Adjustment: If sold out, remove the Sold Out button and keep only Close
                 note.innerHTML = `<span style="color:red; font-weight:bold;">SOLD OUT</span><br><small>This category is no longer available.</small>`;
                 buyBtn.style.display = 'none';
-                closeBtn.style.marginTop = "0px"; // Tighter layout since buy button is gone
+                closeBtn.style.marginTop = "0px";
             } else {
                 note.innerText = "Official seating. Tickets issued immediately.";
                 buyBtn.innerText = "BUY NOW";
