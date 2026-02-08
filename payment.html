@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANGGO HERVAX Gateway | Secure Payment</title>
+    <title>TANGGO HERVAX | Secure Payment Gateway</title>
+    <link rel="icon" type="image/png" href="tanggo.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --brand-red: #980002;
             --brand-dark: #0f0f0f;
             --success-green: #2ecc71;
+            --undpay-blue: #0052ff;
             --border-color: #e5e7eb;
             --bg-light: #f8fafc;
             --glass-header-footer: rgba(255, 255, 255, 0.7);
@@ -113,11 +115,15 @@
             border: 2px solid #f1f5f9; padding: 15px; border-radius: 12px; 
             cursor: pointer; text-align: center; transition: all 0.2s; background: #fff;
             display: flex; flex-direction: column; align-items: center; gap: 8px; font-weight: 600; font-size: 13px;
+            position: relative;
         }
         .method-btn i { font-size: 20px; color: #64748b; }
         .method-btn img { height: 24px; width: auto; object-fit: contain; }
+        
         .method-btn:hover { border-color: var(--brand-red); background: #fffcfc; }
-        .method-disabled { opacity: 0.6; cursor: not-allowed; background: #f8fafc; color: #94a3b8; }
+        .method-btn.undpay-btn:hover { border-color: var(--undpay-blue); background: #f0f7ff; }
+        
+        .method-btn.active-method { border-color: var(--undpay-blue); background: #f0f7ff; }
 
         .payment-screen { display: none; }
         .active-screen { display: block; animation: slideIn 0.4s ease; }
@@ -130,6 +136,7 @@
             font-size: 14px; box-sizing: border-box; outline: none; transition: 0.2s;
         }
         input:focus { border-color: var(--brand-red); box-shadow: 0 0 0 3px rgba(152, 0, 2, 0.1); }
+        .undpay-focus:focus { border-color: var(--undpay-blue) !important; box-shadow: 0 0 0 3px rgba(0, 82, 255, 0.1) !important; }
 
         .otp-container { display: flex; gap: 10px; justify-content: center; margin: 25px 0; width: 100%; }
         .otp-box {
@@ -158,6 +165,8 @@
         }
         .btn-pay:hover:not(:disabled) { background: var(--brand-red); transform: translateY(-2px); }
         .btn-pay:disabled { background: #cbd5e1; cursor: not-allowed; }
+        .btn-undpay { background: var(--undpay-blue) !important; }
+        .btn-undpay:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.9; }
 
         .price-tag { font-size: 2.2rem; color: var(--brand-dark); font-weight: 800; margin: 15px 0; }
         
@@ -191,6 +200,25 @@
             position: fixed; inset: 0; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); 
             z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center;
         }
+
+        /* --- UNDPAY SPECIAL STYLES --- */
+        .undpay-badge { background: #e0eaff; color: var(--undpay-blue); padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+        .scan-line { width: 100%; height: 2px; background: var(--undpay-blue); position: absolute; top: 0; left: 0; box-shadow: 0 0 15px var(--undpay-blue); animation: scanMove 2s infinite linear; display: none;}
+        @keyframes scanMove { 0% { top: 0; } 100% { top: 100%; } }
+        
+        .discount-badge { font-size: 10px; background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+        .preferred-tag { position: absolute; top: -10px; right: -5px; background: #2ecc71; color: white; padding: 2px 8px; border-radius: 4px; font-size: 9px; font-weight: 900; box-shadow: 0 4px 6px rgba(46, 204, 113, 0.2); }
+
+        /* --- NEW UNDPAYLATER ENHANCEMENTS --- */
+        .asset-backed-badge { background: #f0fdf4; color: #166534; font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #bbf7d0; font-weight: 700; }
+        .roadmap-container { margin: 15px 0; padding: 15px; background: #fafafa; border-radius: 10px; border: 1px solid #eee; }
+        .roadmap-step { display: flex; gap: 12px; margin-bottom: 10px; position: relative; }
+        .roadmap-step:not(:last-child)::after { content: ''; position: absolute; left: 4.5px; top: 12px; height: 100%; width: 1px; background: #e2e8f0; }
+        .roadmap-dot { width: 10px; height: 10px; background: var(--undpay-blue); border-radius: 50%; margin-top: 4px; z-index: 1; }
+        .roadmap-info { font-size: 11px; display: flex; justify-content: space-between; width: 100%; }
+        .roadmap-date { color: #64748b; }
+        .roadmap-amt { font-weight: 700; color: #0f172a; }
+        #scan-status-text { font-size: 10px; color: var(--undpay-blue); font-weight: 700; margin-top: 10px; display: none; text-transform: uppercase; text-align: center; }
     </style>
 </head>
 <body>
@@ -206,6 +234,33 @@
         </div>
     </div>
 
+    <div class="processing-overlay" id="und-popup-1">
+        <div class="modal-window">
+            <i class="fas fa-info-circle" style="font-size: 45px; color: var(--undpay-blue); margin-bottom: 15px;"></i>
+            <h3>UNDPay Premium Note</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">You have selected the most secure payment method. Your personal data is protected by the UND-Vault system and never shared with the merchant.</p>
+            <button class="btn-pay btn-undpay" onclick="closePopup('und-popup-1'); document.getElementById('und-popup-2').style.display='flex'">I UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <div class="processing-overlay" id="und-popup-2">
+        <div class="modal-window">
+            <i class="fas fa-exclamation-triangle" style="font-size: 45px; color: #f59e0b; margin-bottom: 15px;"></i>
+            <h3>Security Reminder</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">Please ensure your UND-Authenticator app is open. You will be required to provide a temporary Hardware Token in the next step.</p>
+            <button class="btn-pay btn-undpay" onclick="closePopup('und-popup-2'); handleUNDSecurityFlow()">I UNDERSTOOD</button>
+        </div>
+    </div>
+
+    <div class="processing-overlay" id="und-popup-3">
+        <div class="modal-window">
+            <i class="fas fa-bolt" style="font-size: 45px; color: var(--success-green); margin-bottom: 15px;"></i>
+            <h3>Discount Applied</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 25px;">Congratulations! By using UNDPay, a <strong>4% VIP Discount</strong> has been applied to your final total automatically.</p>
+            <button class="btn-pay btn-undpay" onclick="closePopup('und-popup-3'); proceedToUNDMethod()">I UNDERSTOOD</button>
+        </div>
+    </div>
+
     <div class="processing-overlay" id="alert-system">
         <div class="modal-window">
             <i class="fas fa-exclamation-circle" style="font-size: 45px; color: var(--brand-red); margin-bottom: 15px;"></i>
@@ -216,7 +271,7 @@
     </div>
 
     <div class="processing-overlay" id="loader">
-        <div class="loader"></div>
+        <div class="loader" id="spinner-circle"></div>
         <h3 id="loader-text" style="color:white; letter-spacing: 2px; font-size: 14px;">SECURE CONNECTION...</h3>
     </div>
 
@@ -250,8 +305,8 @@
 
     <div class="processing-overlay" id="verification-modal">
         <div class="modal-window">
-            <h3>3D Secure Verification</h3>
-            <p style="font-size: 13px; color: #64748b;">Enter the 6-digit code sent to your phone.</p>
+            <h3 id="verification-title">3D Secure Verification</h3>
+            <p id="verification-desc" style="font-size: 13px; color: #64748b;">Enter the 6-digit code sent to your phone.</p>
             
             <div class="otp-container" id="otp-inputs">
                 <input type="number" class="otp-box" oninput="moveToNext(this, 0)" onkeydown="moveBack(event, 0)">
@@ -262,7 +317,7 @@
                 <input type="number" class="otp-box" oninput="moveToNext(this, 5)" onkeydown="moveBack(event, 5)">
             </div>
 
-            <button class="btn-pay" onclick="finalAuthorize()">CONFIRM PAYMENT</button>
+            <button class="btn-pay" id="final-auth-btn" onclick="finalAuthorize()">CONFIRM PAYMENT</button>
             <p style="font-size: 11px; margin-top: 20px; color: #94a3b8;">Ref: <span id="ref-code"></span></p>
         </div>
     </div>
@@ -291,26 +346,37 @@
 
     <div class="gateway-wrapper">
         <div class="payment-main" id="main-container">
+            
             <div id="menu-screen" class="payment-screen active-screen">
                 <h2 style="margin:0;">Select Payment Method</h2>
                 <p style="font-size: 14px; color: #64748b; margin-top: 8px;">All transactions are encrypted and secure.</p>
                 
                 <div class="method-grid">
-                    <div class="method-btn" onclick="showScreen('card-screen')">
+                    <div class="method-btn" onclick="showScreen('card-screen'); applyFee()">
                         <i class="fas fa-credit-card"></i>
                         <span>Card</span>
                     </div>
-                    <div class="method-btn" onclick="showScreen('fpx-screen')">
+                    <div class="method-btn" onclick="showScreen('fpx-screen'); resetTotals()">
                         <img src="fpx.png" alt="FPX">
                         <span>Banking</span>
                     </div>
-                    <div class="method-btn" onclick="showScreen('paylater-screen')">
+                    <div class="method-btn" onclick="showScreen('paylater-screen'); applyFee()">
                         <i class="fas fa-calendar-alt"></i>
                         <span>PayLater</span>
                     </div>
-                    <div class="method-btn method-disabled" onclick="triggerError('UNDPay Gateway: Coming Soon. Maintenance in progress.')">
+                    <div class="method-btn" onclick="handleApplePay()">
+                        <img src="applepay.png" alt="Apple Pay">
+                        <span>Apple Pay</span>
+                    </div>
+                    <div class="method-btn undpay-btn" style="border-color: #0052ff1a;" onclick="handleUNDPaySelection('UNDPAY')">
+                        <div class="preferred-tag">PREFERRED</div>
                         <img src="undpay.png" alt="UNDPay">
-                        <span>UNDPay</span>
+                        <span style="color: var(--undpay-blue);">UNDPay Premium <span class="discount-badge">-4%</span></span>
+                    </div>
+                    <div class="method-btn undpay-btn" style="border-color: #0052ff1a;" onclick="handleUNDPaySelection('UNDPAYLATER')">
+                        <div class="preferred-tag">PREFERRED</div>
+                        <img src="undpaylater.png" alt="UNDPayLater">
+                        <span style="color: var(--undpay-blue);">UNDPayLater</span>
                     </div>
                 </div>
                 
@@ -321,7 +387,7 @@
             </div>
 
             <div id="card-screen" class="payment-screen">
-                <div class="back-btn" onclick="showScreen('menu-screen')"><i class="fas fa-arrow-left"></i> Change Method</div>
+                <div class="back-btn" onclick="showScreen('menu-screen'); resetTotals();"><i class="fas fa-arrow-left"></i> Change Method</div>
                 <div class="card-preview">
                     <div class="card-logo" id="card-type-logo">VISA</div>
                     <div style="font-size: 1.4rem; letter-spacing: 3px; font-family: monospace;" id="card-num-live">•••• •••• •••• ••••</div>
@@ -342,7 +408,7 @@
             </div>
 
             <div id="fpx-screen" class="payment-screen">
-                <div class="back-btn" onclick="showScreen('menu-screen')"><i class="fas fa-arrow-left"></i> Change Method</div>
+                <div class="back-btn" onclick="showScreen('menu-screen'); resetTotals();"><i class="fas fa-arrow-left"></i> Change Method</div>
                 <h3>Choose Your Bank</h3>
                 <div class="bank-partner-logo">OFFICIAL FPX PARTNER</div>
                 
@@ -385,7 +451,7 @@
             </div>
 
             <div id="paylater-screen" class="payment-screen">
-                <div class="back-btn" onclick="showScreen('menu-screen')"><i class="fas fa-arrow-left"></i> Change Method</div>
+                <div class="back-btn" onclick="showScreen('menu-screen'); resetTotals();"><i class="fas fa-arrow-left"></i> Change Method</div>
                 <h3>Installment Application</h3>
                 <form oninput="checkPLForm()">
                     <div class="input-group"><label>Legal Full Name</label><input type="text" id="pl-name" oninput="this.value = this.value.toUpperCase()"></div>
@@ -400,6 +466,56 @@
                         <input type="checkbox" id="legal-check" style="width: auto;"> I confirm the information provided is accurate.
                     </label>
                     <button type="button" id="pl-continue" class="btn-pay" disabled onclick="openConfirm('PAYLATER')">Verify Credit Limit</button>
+                </form>
+            </div>
+
+            <div id="undpay-screen" class="payment-screen">
+                <div class="back-btn" onclick="showScreen('menu-screen'); resetTotals();"><i class="fas fa-arrow-left"></i> Change Method</div>
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 id="und-vault-title">UNDPay Vault Login</h3>
+                    <span class="undpay-badge"><i class="fas fa-shield-alt"></i> MILITARY GRADE</span>
+                </div>
+                
+                <div style="background: #f0f7ff; padding: 15px; border-radius: 12px; margin-bottom: 25px; border-left: 4px solid var(--undpay-blue);">
+                    <p style="margin:0; font-size: 11px; color: #1e40af; line-height: 1.5;">
+                        <strong>High-Security Mode:</strong> You are accessing the UNDPay Decentralized Gateway. Identity verification requires a registered Vault ID.
+                    </p>
+                </div>
+
+                <form oninput="checkUNDForm()">
+                    <div class="input-group">
+                        <label>UND-ID (Vault Identity)</label>
+                        <div style="position:relative;">
+                            <input type="text" id="und-u" class="undpay-focus" placeholder="UND-VX XXX-XX-XXXX" style="padding-left: 40px;" oninput="formatUNDID(this)">
+                            <i class="fas fa-user-shield" style="position:absolute; left: 15px; top: 15px; color: var(--undpay-blue);"></i>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Vault Key (Password)</label>
+                        <div style="position:relative;">
+                            <input type="password" id="und-p" class="undpay-focus" placeholder="••••••••" style="padding-left: 40px;">
+                            <i class="fas fa-key" style="position:absolute; left: 15px; top: 15px; color: var(--undpay-blue);"></i>
+                        </div>
+                    </div>
+
+                    <div id="und-pl-plan-area" style="display: none;">
+                         <p style="font-size: 11px; font-weight: 700; color: var(--undpay-blue); margin: 15px 0 10px;">Select Vault Installment Plan:</p>
+                         <div id="und-paylater-plans"></div>
+                    </div>
+
+                    <div style="background: #fff; border: 1.5px dashed #cbd5e1; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden;" id="biometric-area">
+                        <div class="scan-line" id="und-scanner"></div>
+                        <i class="fas fa-fingerprint" style="font-size: 30px; color: #cbd5e1; margin-bottom: 10px;"></i>
+                        <p style="font-size: 10px; color: #64748b; margin:0;">Biometric Lock Active<br>Waiting for credential match...</p>
+                    </div>
+
+                    <p id="scan-status-text"></p>
+                    
+                    <button id="und-continue" class="btn-pay btn-undpay" disabled type="button" onclick="handleUNDVaultProceed()">ACCESS SECURE VAULT</button>
+                    
+                    <p style="font-size: 10px; color: #94a3b8; text-align: center; margin-top: 15px;">
+                        <i class="fas fa-info-circle"></i> UNDPay uses zero-knowledge proofing to hide your sensitive data from the merchant.
+                    </p>
                 </form>
             </div>
 
@@ -420,6 +536,14 @@
             <div class="price-tag" id="summary-total">RM 0.00</div>
             
             <div style="margin-top: 25px; border-top: 1px solid #f1f5f9; padding-top: 20px;">
+                <div style="display: none; justify-content: space-between; font-size: 13px; margin-bottom: 10px;" id="discount-row">
+                    <span style="color: #15803d; font-weight: 700;">UNDPay Discount (4%):</span>
+                    <span id="discount-val" style="color: #15803d; font-weight: 700;">- RM 0.00</span>
+                </div>
+                <div style="display: none; justify-content: space-between; font-size: 13px; margin-bottom: 10px;" id="fee-row">
+                    <span style="color: #64748b;">Processing Fee:</span>
+                    <span style="font-weight: 600;">RM 6.79</span>
+                </div>
                 <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px;">
                     <span style="color: #64748b;">Order Ref:</span>
                     <span id="summary-id" style="font-weight: 600;">#---</span>
@@ -450,19 +574,19 @@
     </footer>
 
     <script>
-        const MASTER_KEY = "bmth_master_v5";
+        const MASTER_KEY = "bmth_master_v8";
         const checkoutData = JSON.parse(localStorage.getItem('pendingOrder')) || {
             total: "0.00", orderID: "THX-" + Math.floor(Math.random()*999999), customer: "Guest User", summary: "No items listed"
         };
 
         let currentTotal = parseFloat(checkoutData.total);
         let baseTotal = parseFloat(checkoutData.total);
+        const TX_FEE = 6.79;
         let currentMethod = "";
         let selectedPL = false;
         let selectedPL_Months = 0;
         let selectedBankName = "";
 
-        // AUTO-FOCUS & AUTO-TYPE OTP HANDLER
         function moveToNext(el, index) {
             if (el.value.length >= 1) {
                 el.value = el.value.slice(0, 1);
@@ -490,6 +614,112 @@
             document.querySelectorAll('.payment-screen').forEach(s => s.classList.remove('active-screen'));
             document.getElementById(id).classList.add('active-screen');
             if(id === 'fpx-login-screen') document.getElementById('fpx-bank-label').innerText = selectedBankName + " Secure Login";
+        }
+
+        function handleApplePay() {
+            currentMethod = "APPLEPAY";
+            currentTotal = baseTotal + TX_FEE;
+            document.getElementById('summary-total').innerText = "RM " + currentTotal.toFixed(2);
+            document.getElementById('fee-row').style.display = 'flex';
+            
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            document.getElementById('loader-text').innerText = "AUTHENTICATING APPLE PAY...";
+            setTimeout(() => {
+                document.getElementById('loader-text').innerText = "BIOMETRIC VERIFIED...";
+                setTimeout(() => { proceedToVerify(); }, 1500);
+            }, 1500);
+        }
+
+        function handleUNDPaySelection(type) {
+            currentMethod = type;
+            resetTotals();
+            
+            if (type === 'UNDPAY') {
+                const discount = baseTotal * 0.04;
+                currentTotal = baseTotal - discount;
+                document.getElementById('discount-row').style.display = 'flex';
+                document.getElementById('discount-val').innerText = "- RM " + discount.toFixed(2);
+                document.getElementById('und-popup-1').style.display = 'flex';
+            } else {
+                currentTotal = baseTotal;
+                document.getElementById('und-popup-1').style.display = 'flex';
+            }
+            document.getElementById('summary-total').innerText = "RM " + currentTotal.toFixed(2);
+        }
+
+        function handleUNDSecurityFlow() {
+            if (currentMethod === 'UNDPAY') {
+                document.getElementById('und-popup-3').style.display = 'flex';
+            } else {
+                proceedToUNDMethod();
+            }
+        }
+
+        function proceedToUNDMethod() {
+            if(currentMethod === "UNDPAYLATER") {
+                document.getElementById('und-vault-title').innerText = "UNDPayLater Vault";
+                document.getElementById('und-pl-plan-area').style.display = 'none'; // Hidden until credit scan
+                document.getElementById('und-continue').innerText = "ACCESS SECURE VAULT";
+                document.getElementById('und-continue').onclick = handleUNDVaultProceed;
+            } else {
+                document.getElementById('und-vault-title').innerText = "UNDPay Vault Login";
+                document.getElementById('und-pl-plan-area').style.display = 'none';
+                document.getElementById('und-continue').innerText = "ACCESS SECURE VAULT";
+                document.getElementById('und-continue').onclick = () => openConfirm('UNDPAY');
+            }
+            showScreen('undpay-screen');
+        }
+
+        function handleUNDVaultProceed() {
+            const btn = document.getElementById('und-continue');
+            const scanner = document.getElementById('und-scanner');
+            const statusText = document.getElementById('scan-status-text');
+            
+            btn.disabled = true;
+            scanner.style.display = 'block';
+            statusText.style.display = 'block';
+            statusText.innerText = "Analyzing Vault Liquidity...";
+
+            setTimeout(() => { statusText.innerText = "Verifying Asset Collateral..."; }, 1200);
+
+            setTimeout(() => {
+                scanner.style.display = 'none';
+                statusText.innerText = "Vault Approved: RM 15,000.00 Limit";
+                statusText.style.color = 'var(--success-green)';
+                
+                document.getElementById('und-pl-plan-area').style.display = 'block';
+                generateUNDPayLater();
+                btn.disabled = true; // Wait for plan selection
+                btn.innerText = "CONFIRM VAULT REPAYMENT";
+                btn.onclick = () => openConfirm('UNDPAYLATER');
+            }, 2500);
+        }
+
+        function resetTotals() {
+            currentTotal = baseTotal;
+            selectedPL = false;
+            document.getElementById('summary-total').innerText = "RM " + baseTotal.toFixed(2);
+            document.getElementById('discount-row').style.display = 'none';
+            document.getElementById('fee-row').style.display = 'none';
+        }
+
+        function applyFee() {
+            resetTotals();
+            currentTotal = baseTotal + TX_FEE;
+            document.getElementById('summary-total').innerText = "RM " + currentTotal.toFixed(2);
+            document.getElementById('fee-row').style.display = 'flex';
+        }
+
+        function formatUNDID(el) {
+            let value = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (!value.startsWith("UNDVX")) { value = "UNDVX" + value; }
+            let formatted = "UND-VX ";
+            let core = value.substring(5); 
+            if (core.length > 0) { formatted += core.substring(0, 3); }
+            if (core.length > 3) { formatted += "-" + core.substring(3, 5); }
+            if (core.length > 5) { formatted += "-" + core.substring(5, 9); }
+            el.value = formatted;
         }
 
         function selectBank(name, el) {
@@ -529,30 +759,79 @@
         function checkCardForm() { const isValid = document.getElementById('c-num').value.length === 19 && document.getElementById('c-name').value.length > 3 && document.getElementById('c-exp').value.length === 5 && document.getElementById('c-cvv').value.length === 3; document.getElementById('card-continue').disabled = !isValid; }
         function checkFPXForm() { const isValid = document.getElementById('fpx-u').value.length > 2 && document.getElementById('fpx-p').value.length > 2; document.getElementById('fpx-continue').disabled = !isValid; }
         function checkPLForm() { const isValid = document.getElementById('pl-ic').value.length === 14 && document.getElementById('pl-email').value.includes('@') && document.getElementById('pl-phone').value.length >= 11 && document.getElementById('legal-check').checked && selectedPL; document.getElementById('pl-continue').disabled = !isValid; }
+        function checkUNDForm() { 
+            const isValid = document.getElementById('und-u').value.length >= 17 && document.getElementById('und-p').value.length > 4; 
+            document.getElementById('und-continue').disabled = !isValid; 
+            if(isValid) {
+                document.getElementById('und-scanner').style.display = 'block';
+                document.querySelector('#biometric-area i').style.color = 'var(--undpay-blue)';
+            } else {
+                document.getElementById('und-scanner').style.display = 'none';
+                document.querySelector('#biometric-area i').style.color = '#cbd5e1';
+            }
+        }
         
         function generatePayLater() { 
             const months = [3, 6, 12]; 
             document.getElementById('paylater-plans').innerHTML = months.map(m => { 
-                const total = baseTotal * (1 + (0.01 * m)); 
+                const total = (baseTotal + TX_FEE) * (1 + (0.01 * m)); 
                 return `<div class="installment-box" onclick="setPL(${total}, ${m}, this)"><span>${m} Months Plan</span><strong>RM ${(total/m).toFixed(2)}/mo</strong></div>`; 
             }).join(''); 
+        }
+
+        function generateUNDPayLater() {
+            const months = [3, 6, 12]; 
+            document.getElementById('und-paylater-plans').innerHTML = months.map(m => { 
+                const total = baseTotal * (1 + (0.005 * m)); 
+                return `<div class="installment-box" style="border-color:#0052ff2a; align-items:center;" onclick="setUNDPL(${total}, ${m}, this)">
+                    <div><span style="font-weight:700;">${m} Months (VIP)</span> <span class="asset-backed-badge">ASSET-BACKED</span></div>
+                    <strong>RM ${(total/m).toFixed(2)}/mo</strong>
+                </div>`; 
+            }).join(''); 
+        }
+
+        function renderRoadmap(months, amount) {
+            let roadmapHtml = `<div class="roadmap-container"><p style="font-size:10px; font-weight:800; margin:0 0 10px 0; color:#64748b;">REPAYMENT ROADMAP</p>`;
+            for(let i=1; i<=3; i++) {
+                const date = new Date(); date.setMonth(date.getMonth() + i);
+                roadmapHtml += `<div class="roadmap-step"><div class="roadmap-dot"></div><div class="roadmap-info"><span class="roadmap-date">Month ${i}: ${date.toLocaleDateString('en-MY', {month:'short', year:'numeric'})}</span><span class="roadmap-amt">RM ${amount}</span></div></div>`;
+            }
+            if(months > 3) roadmapHtml += `<p style="font-size:9px; color:#94a3b8; margin:5px 0 0 22px;">+ ${months-3} more installments</p>`;
+            roadmapHtml += `</div>`;
+            
+            let existing = document.getElementById('und-roadmap');
+            if(!existing) { existing = document.createElement('div'); existing.id = 'und-roadmap'; document.getElementById('und-paylater-plans').after(existing); }
+            existing.innerHTML = roadmapHtml;
         }
         
         function setPL(amt, months, el) { 
             document.querySelectorAll('.installment-box').forEach(b => b.classList.remove('inst-active')); 
             el.classList.add('inst-active'); 
-            currentTotal = amt; 
-            selectedPL_Months = months; 
-            selectedPL = true; 
+            currentTotal = amt; selectedPL_Months = months; selectedPL = true; 
             document.getElementById('summary-total').innerText = "RM " + amt.toFixed(2); 
             checkPLForm(); 
+        }
+
+        function setUNDPL(amt, months, el) {
+            document.querySelectorAll('.installment-box').forEach(b => b.classList.remove('inst-active')); 
+            el.classList.add('inst-active'); 
+            currentTotal = amt; selectedPL_Months = months; selectedPL = true; 
+            document.getElementById('summary-total').innerText = "RM " + amt.toFixed(2); 
+            renderRoadmap(months, (amt/months).toFixed(2));
+            document.getElementById('und-continue').disabled = false;
         }
 
         function openConfirm(method) {
             currentMethod = method;
             let detailHTML = `<p><strong>Merchant:</strong> TANGGO HERVAX</p><p><strong>Order ID:</strong> #${checkoutData.orderID}</p><hr style="border:0; border-top:1px solid #e2e8f0; margin:10px 0;">`;
-            if(method === 'CARD') { detailHTML += `<p><strong>Method:</strong> Credit/Debit Card</p><p><strong>Account:</strong> •••• ${document.getElementById('c-num').value.slice(-4)}</p>`; } 
-            else if(method === 'PAYLATER') { detailHTML += `<p><strong>Method:</strong> PayLater</p><p><strong>Tenure:</strong> ${selectedPL_Months} Months</p>`; } 
+            if(method === 'CARD') { detailHTML += `<p><strong>Method:</strong> Credit/Debit Card</p><p><strong>Account:</strong> •••• ${document.getElementById('c-num').value.slice(-4)}</p><p><strong>Fee:</strong> RM 6.79</p>`; } 
+            else if(method === 'PAYLATER') { detailHTML += `<p><strong>Method:</strong> PayLater</p><p><strong>Tenure:</strong> ${selectedPL_Months} Months</p><p><strong>Fee:</strong> RM 6.79</p>`; } 
+            else if(method === 'UNDPAY' || method === 'UNDPAYLATER') { 
+                detailHTML += `<p><strong>Method:</strong> ${method === 'UNDPAY' ? 'UNDPay Premium' : 'UNDPayLater'}</p><p><strong>Vault ID:</strong> ${document.getElementById('und-u').value}</p>`; 
+                if(method === 'UNDPAY') detailHTML += `<p style="color:#15803d;"><strong>Discount Applied:</strong> 4%</p>`;
+                if(method === 'UNDPAYLATER') detailHTML += `<p><strong>Tenure:</strong> ${selectedPL_Months} Months</p>`;
+            }
+            else if(method === 'APPLEPAY') { detailHTML += `<p><strong>Method:</strong> Apple Pay</p><p><strong>Device:</strong> Verified via iOS/macOS</p><p><strong>Fee:</strong> RM 6.79</p>`; }
             else { detailHTML += `<p><strong>Method:</strong> Online Banking (FPX)</p><p><strong>Bank:</strong> ${selectedBankName}</p>`; }
             document.getElementById('dynamic-details-area').innerHTML = detailHTML;
             document.getElementById('confirm-modal').style.display = 'flex';
@@ -560,23 +839,52 @@
 
         function checkAgreementRequirement() {
             closePopup('confirm-modal');
-            if(currentMethod === 'PAYLATER') document.getElementById('agreement-modal').style.display = 'flex';
+            if(currentMethod === 'PAYLATER' || currentMethod === 'UNDPAYLATER') document.getElementById('agreement-modal').style.display = 'flex';
             else startMultiStepProcess();
         }
 
         function startMultiStepProcess() {
             closePopup('agreement-modal');
-            document.getElementById('loader').style.display = 'flex';
-            document.getElementById('loader-text').innerText = "ENCRYPTING TRANSACTION...";
-            document.getElementById('ref-code').innerText = Math.random().toString(36).substring(2,8).toUpperCase();
-            setTimeout(() => { 
-                document.getElementById('loader-text').innerText = "HANDSHAKE VERIFIED..."; 
+            const loader = document.getElementById('loader');
+            const lText = document.getElementById('loader-text');
+            loader.style.display = 'flex';
+            
+            if(currentMethod.startsWith('UND')) {
+                lText.innerText = "INITIALIZING BIOMETRIC HANDSHAKE...";
+                setTimeout(() => {
+                    lText.innerText = "SYNCING WITH UND-CLOUD VAULT...";
+                    setTimeout(() => {
+                        lText.innerText = "DECRYPTING PRIVATE RSA KEYS...";
+                        setTimeout(() => {
+                            lText.innerText = "GENERATING HARDWARE TOKEN...";
+                            setTimeout(() => { proceedToVerify(); }, 2000);
+                        }, 1500);
+                    }, 1500);
+                }, 1500);
+            } else {
+                lText.innerText = "ENCRYPTING TRANSACTION...";
                 setTimeout(() => { 
-                    document.getElementById('loader').style.display = 'none'; 
-                    document.getElementById('verification-modal').style.display = 'flex'; 
-                    document.querySelector('.otp-box').focus();
-                }, 1500); 
-            }, 1500);
+                    lText.innerText = "HANDSHAKE VERIFIED..."; 
+                    setTimeout(() => { proceedToVerify(); }, 1500); 
+                }, 1500);
+            }
+        }
+
+        function proceedToVerify() {
+            document.getElementById('loader').style.display = 'none'; 
+            document.getElementById('verification-modal').style.display = 'flex'; 
+            document.getElementById('ref-code').innerText = Math.random().toString(36).substring(2,8).toUpperCase();
+            
+            if(currentMethod.startsWith('UND')) {
+                document.getElementById('verification-title').innerText = "Hardware Token Verification";
+                document.getElementById('verification-desc').innerHTML = "Enter the high-security token from your <strong>UNDPay Authenticator App</strong>.";
+                document.getElementById('final-auth-btn').style.background = 'var(--undpay-blue)';
+            } else {
+                document.getElementById('verification-title').innerText = "3D Secure Verification";
+                document.getElementById('verification-desc').innerText = "Enter the 6-digit code sent to your phone.";
+                document.getElementById('final-auth-btn').style.background = 'var(--brand-dark)';
+            }
+            document.querySelector('.otp-box').focus();
         }
 
         function finalAuthorize() {
@@ -587,6 +895,16 @@
                 return; 
             }
             
+            const recentOrder = {
+                id: checkoutData.orderID,
+                date: new Date().toLocaleDateString(),
+                status: "Processing",
+                items: checkoutData.summary,
+                total: currentTotal.toFixed(2),
+                type: (checkoutData.summary.toLowerCase().includes("ticket")) ? 'ticket' : 'merch'
+            };
+            localStorage.setItem('bmth_recent_order', JSON.stringify(recentOrder));
+
             closePopup('verification-modal');
             document.getElementById('loader').style.display = 'flex';
             document.getElementById('loader-text').innerText = "PROCESSING AUTHORIZATION...";
@@ -600,57 +918,63 @@
             document.getElementById('loader').style.display = 'none';
             const transID = "TXN-" + Math.floor(Math.random()*900000 + 100000);
             const invID = "INV/2026/TX" + Math.floor(Math.random()*9999);
-            const customerName = currentMethod === 'PAYLATER' ? document.getElementById('pl-name').value : checkoutData.customer.toUpperCase();
+            
+            let customerName = checkoutData.customer.toUpperCase();
+            if(currentMethod === 'PAYLATER') customerName = document.getElementById('pl-name').value;
+            if(currentMethod.startsWith('UND')) customerName = document.getElementById('und-u').value;
             
             let methodLabel = "";
             if(currentMethod === 'CARD') methodLabel = "Credit/Debit Card";
             else if(currentMethod === 'PAYLATER') methodLabel = "PayLater Installment";
+            else if(currentMethod === 'UNDPAY') methodLabel = "UNDPay Vault (Deep Encrypted)";
+            else if(currentMethod === 'UNDPAYLATER') methodLabel = "UNDPayLater Installment";
+            else if(currentMethod === 'APPLEPAY') methodLabel = "Apple Pay (iOS)";
             else methodLabel = "FPX Online Banking (" + selectedBankName + ")";
 
             let scheduleHTML = "";
-            if(currentMethod === 'PAYLATER') {
+            if(currentMethod === 'PAYLATER' || currentMethod === 'UNDPAYLATER') {
                 const monthlyAmt = (currentTotal/selectedPL_Months).toFixed(2);
                 scheduleHTML = `<div style="margin-top:20px; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden;"><div style="background:#f8fafc; padding:8px 15px; font-size:11px; font-weight:bold; border-bottom:1px solid #e2e8f0; color:#475569;">REPAYMENT SCHEDULE</div><div style="padding:10px 15px;">`;
-                
-                // DATE CALCULATION LOGIC: START NEXT MONTH 1st
                 let today = new Date();
                 let nextMonth = today.getMonth() + 1;
                 let year = today.getFullYear();
-
                 for(let i=1; i<=selectedPL_Months; i++) {
                     let displayMonth = (nextMonth + (i-1)) % 12;
                     let displayYear = year + Math.floor((nextMonth + (i-1)) / 12);
                     if(displayMonth === 0) { displayMonth = 12; displayYear -= 1; }
-                    
                     let dateStr = "01/" + (displayMonth < 10 ? '0' + displayMonth : displayMonth) + "/" + displayYear;
-                    
                     scheduleHTML += `<div style="display:flex; justify-content:space-between; font-size:11px; margin-bottom:4px;"><span style="color:#64748b;">${dateStr} Repayment</span><span style="font-weight:600; color:#0f172a;">RM ${monthlyAmt}</span></div>`;
                 }
                 scheduleHTML += `</div></div>`;
             }
 
+            const receiptHeaderColor = (currentMethod.startsWith('UND')) ? 'var(--undpay-blue)' : '#0f172a';
+            const hasFee = (currentMethod === 'CARD' || currentMethod === 'PAYLATER' || currentMethod === 'APPLEPAY');
+
             document.getElementById('receipt-payload').innerHTML = `
-                <div style="background:#0f172a; padding:20px; color:white; display:flex; justify-content:space-between; align-items:center;">
+                <div style="background:${receiptHeaderColor}; padding:20px; color:white; display:flex; justify-content:space-between; align-items:center;">
                     <div style="display:flex; align-items:center; gap:10px;"><img src="tanggo.png" style="height:45px; filter:brightness(0) invert(1);"><div><div style="font-weight:900; font-size:18px;">E-INVOICE</div><div style="font-size:10px; opacity:0.7;">Official Record</div></div></div>
                     <div style="text-align:right;"><div style="font-weight:bold; font-size:12px;">TANGGO HERVAX</div><div style="font-size:9px; opacity:0.7;">Merchant ID: THX-99281</div></div>
                 </div>
                 <div style="padding:30px; text-align:left;">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:25px; border-bottom: 1px solid #f1f5f9; padding-bottom:20px;">
-                        <div><div style="font-size:9px; color:#94a3b8; font-weight:800;">Customer Name</div><div style="font-size:12px; font-weight:700;">${customerName}</div></div>
+                        <div><div style="font-size:9px; color:#94a3b8; font-weight:800;">Customer Identity</div><div style="font-size:12px; font-weight:700;">${customerName}</div></div>
                         <div style="text-align:right;"><div style="font-size:9px; color:#94a3b8; font-weight:800;">Details</div><div style="font-size:11px;">ID: ${invID}</div><div style="font-size:11px;">Date: ${new Date().toLocaleDateString()}</div></div>
                     </div>
                     <div style="margin-bottom:20px;">
                         <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8; border-bottom:1.5px solid #0f172a; padding-bottom:8px; margin-bottom:12px;"><span>DESCRIPTION</span><span>TOTAL</span></div>
                         <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:10px;"><span style="font-weight:600;">${checkoutData.summary || 'Merchandise'}</span><span style="font-weight:700;">RM ${baseTotal.toFixed(2)}</span></div>
-                        ${currentMethod === 'PAYLATER' ? `<div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:10px;"><span>Fees</span><span>RM ${(currentTotal - baseTotal).toFixed(2)}</span></div>` : ''}
-                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:10px;"><span>Method</span><span>${methodLabel}</span></div>
+                        ${hasFee ? `<div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:10px;"><span>Processing Fee</span><span>RM 6.79</span></div>` : ''}
+                        ${(currentMethod === 'PAYLATER' || currentMethod === 'UNDPAYLATER') ? `<div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:10px;"><span>Installment Interest</span><span>RM ${(currentTotal - (currentMethod === 'UNDPAYLATER' ? baseTotal : (baseTotal + TX_FEE))).toFixed(2)}</span></div>` : ''}
+                        ${currentMethod === 'UNDPAY' ? `<div style="display:flex; justify-content:space-between; font-size:11px; color:#15803d; margin-bottom:10px;"><span>UNDPay VIP Discount (4%)</span><span>- RM ${(baseTotal * 0.04).toFixed(2)}</span></div>` : ''}
+                        <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; margin-bottom:10px;"><span>Payment Method</span><span>${methodLabel}</span></div>
                         <div style="border-top:1px solid #f1f5f9; margin-top:15px; padding-top:15px; display:flex; justify-content:space-between; align-items:center;"><span style="font-weight:900; font-size:13px;">GRAND TOTAL</span><span style="font-weight:900; font-size:24px;">RM ${currentTotal.toFixed(2)}</span></div>
                     </div>
                     ${scheduleHTML}
                     <div style="margin-top:30px; padding:15px; border-radius:12px; background:#f0fdf4; color:#15803d; font-size:11px; font-weight:700; text-align:center;"><i class="fas fa-check-circle"></i> PAYMENT AUTHORIZED</div>
                     <div style="margin-top:25px; display:flex; gap:10px;">
                         <button class="btn-pay" style="flex:1; background:#64748b; font-size:11px;" onclick="window.print()">DOWNLOAD</button>
-                        <button class="btn-pay" style="flex:1; font-size:11px;" onclick="finish('${transID}', '${methodLabel}')">OKAY <i class="fas fa-arrow-right"></i></button>
+                        <button class="btn-pay ${currentMethod.startsWith('UND') ? 'btn-undpay' : ''}" style="flex:1; font-size:11px;" onclick="finish('${transID}', '${methodLabel}')">OKAY <i class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
             `;

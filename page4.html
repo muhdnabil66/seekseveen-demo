@@ -23,7 +23,7 @@
 
         body {
             margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
-            background: url('bgtest.gif') no-repeat center center fixed;
+            background: url('horizon2.png') no-repeat center center fixed;
             background-size: cover; color: var(--text-light);
             min-height: 100vh; display: flex; flex-direction: column;
             overflow-x: hidden;
@@ -216,6 +216,9 @@
             <a href="page2.html" class="sidebar-link">Map</a>
             <a href="page3.html" class="sidebar-link">Price</a>
             <a href="help.html" class="sidebar-link">Contact</a>
+            <a href="track.html" class="sidebar-link">
+            <i class="fas fa-truck"></i> Track My Merch
+            </a>
         </div>
     </div>
 
@@ -237,6 +240,7 @@
             <nav class="nav-links">
                 <a href="page2.html">Map</a>
                 <a href="page3.html">Price</a>
+                <a href="track.html"><i class="fas fa-truck"></i> Track My Merch</a>
             </nav>
             <div class="cart-icon-btn" onclick="toggleCart(true)">
                 <i class="fas fa-shopping-bag"></i>
@@ -335,7 +339,7 @@
     </footer>
 
     <script>
-        const hasReset_v1 = "bmth_stable_v5"; 
+        const hasReset_v1 = "bmth_stable_v8"; 
         const stockInitialValues = {
             1: { S: 390, M: 200, L: 450, XL: 780 },
             2: { S: 777, M: 777, L: 777, XL: 777 },
@@ -347,7 +351,7 @@
             8: { qty: 843 }
         };
 
-        const stockSpeeds = { 1: 300, 2: 200, 3: 800, 4: 400, 5: 1000, 6: 300, 7: 5000, 8: 100 };
+        const stockSpeeds = { 1: 100, 2: 20, 3: 80, 4: 90, 5: 100, 6: 170, 7: 500, 8: 100 };
 
         let products = [
             { id: 1, name: 'NO LVE LIKE UR OWN LSLEEVE', price: 299, hasSize: true, img: 'swshirt.png', imgB: 'swshirt2.png', rating: 4.2, reviewCount: 429 },

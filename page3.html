@@ -26,7 +26,7 @@
 
         body {
             margin: 0; font-family: 'Segoe UI', sans-serif;
-            background: url('bgtest.gif') no-repeat center center fixed;
+            background: url('horizon2.png') no-repeat center center fixed;
             background-size: cover; color: var(--text-light);
             min-height: 100vh; display: flex; flex-direction: column;
             overflow-x: hidden;
@@ -139,7 +139,7 @@
 <body>
 
     <div id="sold-out-msg"><i class="fas fa-exclamation-triangle"></i> Event maximum capacity reached. Contact help.und2@gmail.com</div>
-    <div id="purchase-msg"><i class="fas fa-heart" style="color:var(--brand-red)"></i> You already purchased. Thank you for trusting SeekSeveen.</div>
+    <div id="purchase-msg"><i class="fas fa-check-circle" style="color:var(--brand-red)"></i> You already purchased. Thank you for trusting SeekSeveen.</div>
 
     <div id="success-claim" class="msg-popup">
         <i class="fas fa-check-circle" style="color:#00ff00; font-size: 3rem; margin-bottom: 15px;"></i>
@@ -235,7 +235,7 @@
         }
 
         // UPDATED MASTER KEY FOR PERSISTENCE
-        const MASTER_KEY = "bmth_master_v5"; 
+        const MASTER_KEY = "bmth_master_v8"; 
         const GLOBAL_LIMIT = 85000;
         const VOUCHER_MAX = 500;
         const VOUCHER_SPEED = 3000; 
@@ -245,12 +245,12 @@
         let selectedCatId = null;
 
         const categories = [
-            { id: 0, name: "Standard", price: 499, limit: 55000, minInc: 2, maxInc: 50, speed: 100, img: "standard.png" },
+            { id: 0, name: "Standard", price: 499, limit: 55000, minInc: 2, maxInc: 50, speed: 1000, img: "standard.png" },
             { id: 1, name: "Bronze",   price: 699, limit: 14750, minInc: 1, maxInc: 35, speed: 1000, img: "bronze.png" },
             { id: 2, name: "Silver",   price: 999, limit: 7000, minInc: 3, maxInc: 25, speed: 5000, img: "silver.png" },
-            { id: 3, name: "Gold",     price: 1699, limit: 5000, minInc: 5, maxInc: 15, speed: 400, img: "gold.png" },
-            { id: 4, name: "Platinum", price: 2999, limit: 3000,  minInc: 2, maxInc: 8, speed: 900, img: "platinum.png" },
-            { id: 5, name: "VIP",      price: 4999, limit: 200,   minInc: 1, maxInc: 3, speed: 20000, img: "vip.png" },
+            { id: 3, name: "Gold",     price: 1699, limit: 5000, minInc: 5, maxInc: 15, speed: 4000, img: "gold.png" },
+            { id: 4, name: "Platinum", price: 2999, limit: 3000,  minInc: 2, maxInc: 8, speed: 9000, img: "platinum.png" },
+            { id: 5, name: "VIP",      price: 4999, limit: 200,   minInc: 1, maxInc: 3, speed: 2000, img: "vip.png" },
             { id: 6, name: "VVIP",     price: 6999, limit: 50,    minInc: 1, maxInc: 2, speed: 15000, img: "vvip.png" },
             { id: 7, name: "VVVIP",    price: 0,    limit: 0,      minInc: 0, maxInc: 0, speed: 0,    img: "vvvip.png", locked: true }
         ];

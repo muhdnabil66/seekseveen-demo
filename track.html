@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Tracking | JiX Logistics (M) Sdn. Bhd.</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --bg-page: #f4f4f7;
+            --dark-nav-foot: #111827; 
+            --white: #ffffff;
+            --text-dark: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --invalid: #dc2626;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* DARK PROFESSIONAL NAV */
+        .navbar {
+            background: var(--dark-nav-foot);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #374151;
+        }
+        .navbar .logo-link { display: flex; align-items: center; text-decoration: none; transition: opacity 0.3s; }
+        .navbar .logo-link:hover { opacity: 0.8; }
+        .navbar img { height: 35px; }
+        .nav-status { 
+            font-size: 10px; font-weight: 800; color: #fff; 
+            letter-spacing: 1px; border: 1px solid var(--brand-red); 
+            padding: 5px 12px; border-radius: 4px; background: var(--brand-red);
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 850px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* TRACKING CONTAINER */
+        .track-card {
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        .track-header {
+            background: #ffffff;
+            padding: 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .track-header h1 { margin: 0; font-size: 20px; font-weight: 800; color: var(--text-dark); text-transform: uppercase; }
+        .track-header p { margin: 5px 0 0; color: var(--text-muted); font-size: 13px; font-family: monospace; }
+
+        /* LOGISTICS TIMELINE */
+        .timeline { padding: 50px 30px; display: flex; justify-content: space-between; position: relative; }
+        .timeline-line { position: absolute; top: 75px; left: 50px; right: 50px; height: 3px; background: #eef2f6; z-index: 1; }
+        .timeline-progress { position: absolute; top: 75px; left: 50px; height: 3px; background: var(--brand-red); z-index: 2; transition: width 2s linear; }
+        
+        .t-step { position: relative; z-index: 3; text-align: center; flex: 1; }
+        .t-icon {
+            width: 50px; height: 50px; background: white; border: 2px solid #eef2f6;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px; color: #cbd5e1; font-size: 18px; transition: 0.4s;
+        }
+        .t-step.active .t-icon { border-color: var(--brand-red); color: var(--brand-red); background: #fff; box-shadow: 0 0 15px rgba(152,0,2,0.1); }
+        .t-step.done .t-icon { border-color: var(--success); color: var(--success); }
+        .t-step.failed .t-icon { border-color: var(--invalid); color: var(--invalid); }
+        .t-step p { font-size: 11px; font-weight: 800; text-transform: uppercase; margin: 0; color: var(--text-muted); }
+
+        /* DATA SECTION */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 30px; background: #f9fafb; border-top: 1px solid var(--border); }
+        .info-box { padding: 15px; border-radius: 8px; background: white; border: 1px solid var(--border); }
+        .info-box span { display: block; font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; }
+        .info-box p { margin: 0; font-size: 13px; font-weight: 600; color: var(--text-dark); }
+
+        .btn-home {
+            display: inline-block; width: 100%; padding: 20px; background: var(--dark-nav-foot);
+            color: white; text-align: center; text-decoration: none; font-weight: 700;
+            border-radius: 12px; transition: 0.3s; font-size: 13px; text-transform: uppercase;
+            margin-top: 20px; border: none; cursor: pointer;
+        }
+        .btn-home:hover { background: #000; letter-spacing: 1px; }
+
+        .btn-receipt {
+            background: white; border: 1px solid var(--border); color: var(--text-dark);
+            padding: 10px 15px; border-radius: 8px; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; cursor: pointer; transition: 0.2s; margin-top: 15px;
+        }
+        .btn-receipt:hover { background: #f9fafb; }
+
+        /* Modal Styles */
+        .modal {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+        .receipt-card {
+            background: white; width: 100%; max-width: 400px; border-radius: 15px;
+            padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .receipt-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; border-bottom: 1px dashed #eee; padding-bottom: 8px; }
+
+        footer {
+            background: var(--dark-nav-foot);
+            color: #9ca3af;
+            padding: 60px 5% 40px;
+            margin-top: auto;
+        }
+        .footer-grid {
+            max-width: 1000px; margin: 0 auto;
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px;
+        }
+        .footer-col h4 { color: white; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .footer-col a { display: block; color: #9ca3af; text-decoration: none; margin-bottom: 12px; font-size: 13px; transition: 0.2s; cursor: pointer; }
+        .footer-col a:hover { color: white; }
+        .footer-bottom {
+            max-width: 1000px; margin: 40px auto 0; padding-top: 25px;
+            border-top: 1px solid #374151; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .payment-method-icon { height: 18px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="page4.html" class="logo-link">
+            <img src="jix.png" alt="JiX Logistics (M) Sdn. Bhd." onerror="this.src='sslogo.png'">
+        </a>
+        <div class="nav-status"><i class="fas fa-shipping-fast"></i> JIX LOGISTICS CORE SERVICES</div>
+    </nav>
+
+    <div class="main-content">
+        <div class="section-title"><i class="fas fa-search-location"></i> Consignment Tracking System</div>
+        <div id="app"></div>
+        <a href="page4.html" class="btn-home">CONTINUE SHOPPING</a>
+    </div>
+
+    <div id="receiptModal" class="modal">
+        <div class="receipt-card">
+            <div style="text-align:center; margin-bottom: 20px;">
+                <img src="tanggo.png" style="height:30px; margin-bottom:10px;" onerror="this.style.display='none'">
+                <h2 style="margin:0; font-size:18px;">Transaction Receipt</h2>
+                <p style="font-size:12px; color:var(--text-muted);">TANGGO HERVAX Secured Record</p>
+            </div>
+            <div id="receiptContent"></div>
+            <button class="btn-home" onclick="closeReceipt()">Close</button>
+        </div>
+    </div>
+
+    <div id="infoModal" class="modal">
+        <div class="receipt-card" style="max-width: 550px; max-height: 80vh; overflow-y: auto;">
+            <div style="text-align:left; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;">
+                <h2 id="infoTitle" style="margin:0; font-size:18px; text-transform: uppercase; color: var(--brand-red);"></h2>
+            </div>
+            <div id="infoBody" style="font-size: 13px; line-height: 1.6; color: var(--text-dark);"></div>
+            <button class="btn-home" onclick="closeInfo()" style="margin-top: 25px;">Understood</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col" style="max-width: 350px;">
+                <img src="jix.png" style="height: 50px; margin-bottom: 25px; display: block;" onerror="this.src='sslogo.png'">
+                <p style="font-size: 12px; line-height: 1.6;"><strong>JiX Logistics (M) Sdn. Bhd.</strong><br>Premium fulfillment and digital asset delivery partner for international events. Licensed logistics carrier for Southeast Asia regions.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Consignment Support</h4>
+                <a onclick="openInfo('track')">Track My Parcel</a>
+                <a onclick="openInfo('standards')">Delivery Standards</a>
+                <a onclick="openInfo('courier')">Courier Inquiries</a>
+            </div>
+            <div class="footer-col">
+                <h4>System Integrity</h4>
+                <a onclick="openInfo('privacy')">Privacy Policy</a>
+                <a onclick="openInfo('merchant')">Merchant (Tanggo Hervax)</a>
+                <a onclick="openInfo('api')">Fulfillment API</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p style="font-size: 11px;">&copy; 2026 JiX Logistics (M) Sdn. Bhd. All rights reserved. Fulfillment powered by JiX Express.</p>
+        </div>
+    </footer>
+
+    <script>
+        const footerData = {
+            track: {
+                title: "Consignment Tracking Help",
+                body: "To track your shipment, please use the 12-digit Consignment Number provided in your confirmation email. Status updates are processed in real-time as parcels pass through JiX Logistics transit hubs. If your status hasn't updated for 48 hours, please contact our sorting facility."
+            },
+            standards: {
+                title: "Delivery Standards",
+                body: "<strong>Domestic (West Malaysia):</strong> 1-3 Business Days<br><strong>East Malaysia:</strong> 3-5 Business Days<br><strong>International:</strong> 7-14 Business Days<br><br>All physical items are handled with high-priority sorting. Digital assets and passes are delivered instantly to your account wallet upon payment verification."
+            },
+            courier: {
+                title: "Courier Inquiries",
+                body: "For issues regarding missed deliveries, address corrections, or special handling instructions, please contact our dispatch team at <strong>dispatch@jix-logistics.com.my</strong> or call our 24/7 hotline at +60 3-8888 7777. Please have your Order ID ready."
+            },
+            privacy: {
+                title: "Privacy Policy",
+                body: "JiX Logistics (M) Sdn. Bhd. is committed to protecting your personal data. We only collect information required for the successful delivery of your items (Name, Address, Phone). Your data is encrypted using AES-256 standards and is never shared with third-party marketing firms."
+            },
+            merchant: {
+                title: "Tanggo Hervax Merchant",
+                body: "TANGGO HERVAX is our exclusive digital payment gateway. All transactions are processed through secured, PCI-DSS compliant servers. TANGGO HERVAX acts as the financial intermediary to ensure funds are held in escrow until shipping authorization is granted."
+            },
+            api: {
+                title: "Fulfillment API v2.4",
+                body: "Our proprietary JiX-Core API manages the synchronization between the SeekSeveen storefront and our physical warehouses. This automated system ensures that stock levels are accurate and that shipping labels are generated the moment your payment is confirmed by the gateway."
+            }
+        };
+
+        function getPaymentIcon(method) {
+            if (!method) return '<i class="fas fa-wallet"></i>';
+            const m = method.toUpperCase();
+            if (m.includes("CARD")) return '<i class="fas fa-credit-card"></i>';
+            if (m.includes("PAYLATER") && !m.includes("UND")) return '<i class="fas fa-clock"></i>';
+            if (m.includes("FPX")) return '<img src="fpx.png" class="payment-method-icon" alt="FPX">';
+            if (m.includes("APPLE")) return '<img src="applepay.png" class="payment-method-icon" alt="ApplePay">';
+            if (m.includes("UNDPAY") && !m.includes("LATER")) return '<img src="undpay.png" class="payment-method-icon" alt="UNDPay">';
+            if (m.includes("UNDPAYLATER")) return '<img src="undpaylater.png" class="payment-method-icon" alt="UNDPayLater">';
+            return '<i class="fas fa-wallet"></i>';
+        }
+
+        function renderApp() {
+            const app = document.getElementById('app');
+            const orders = JSON.parse(localStorage.getItem('bmth_orders')) || [];
+
+            if (orders.length === 0) {
+                app.innerHTML = `<div style="text-align:center; padding: 80px 20px; background:white; border-radius:12px; border:1px solid var(--border);">
+                    <i class="fas fa-box" style="font-size: 40px; color: #e5e7eb; margin-bottom: 20px;"></i>
+                    <h2 style="margin:0;">No Active Shipments</h2>
+                    <p style="color:var(--text-muted); font-size:14px;">Logistics data will appear here once payment is verified.</p>
+                </div>`;
+                return;
+            }
+
+            app.innerHTML = orders.map((order, index) => {
+                const totalAmount = order.amount || order.total || "RM 0.00";
+                const isFailed = totalAmount.includes("0.00");
+                const isTicket = order.items && order.items.toLowerCase().includes("ticket");
+                
+                const progressWidth = isFailed ? "0%" : (isTicket ? "100%" : "15%");
+                const statusLabel = isFailed ? "PAYMENT FAILED" : (isTicket ? "READY FOR REDEMPTION" : "SHIPMENT AUTHORIZED");
+                const statusColor = isFailed ? "var(--invalid)" : "var(--success)";
+
+                return `
+                <div class="track-card">
+                    <div class="track-header">
+                        <div>
+                            <p style="color:var(--brand-red); font-weight:800; font-size:10px; margin-bottom:5px;">OFFICIAL JIX FULFILLMENT</p>
+                            <h1>${isTicket ? 'Digital Asset / Pass' : 'Standard Parcel'}</h1>
+                            <p>CONSIGNMENT NO: ${isFailed ? 'N/A' : (order.orderId || order.id || 'N/A')}</p>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="font-size: 10px; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">Tracking Status</span>
+                            <div style="font-size: 16px; font-weight: 800; color:${statusColor};">${statusLabel}</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-line"></div>
+                        <div class="timeline-progress" style="width: ${progressWidth}; background:${statusColor};"></div>
+                        <div class="t-step ${isFailed ? 'failed' : 'done'}">
+                            <div class="t-icon"><i class="fas ${isFailed ? 'fa-times' : 'fa-file-invoice-dollar'}"></i></div>
+                            <p>Payment</p>
+                        </div>
+                        <div class="t-step ${!isFailed && isTicket ? 'done' : ''}">
+                            <div class="t-icon"><i class="fas fa-tasks"></i></div>
+                            <p>Processing</p>
+                        </div>
+                        <div class="t-step ${!isFailed && isTicket ? 'done' : ''}">
+                            <div class="t-icon"><i class="${isTicket ? 'fas fa-qrcode' : 'fas fa-shipping-fast'}"></i></div>
+                            <p>${isTicket ? 'Available' : 'Transit'}</p>
+                        </div>
+                    </div>
+
+                    <div class="info-grid">
+                        <div class="info-box"><span>Consignee</span><p>${isFailed ? 'N/A' : (localStorage.getItem('currentUser') || 'SeekSeveen Member')}</p></div>
+                        <div class="info-box"><span>Logistics Carrier</span><p>${isFailed ? 'N/A' : 'JiX Logistics (M) Sdn. Bhd.'}</p></div>
+                        <div class="info-box"><span>Payment Merchant</span><p>TANGGO HERVAX Gateway</p></div>
+                        <div class="info-box"><span>Verification Date</span><p>${isFailed ? 'N/A' : (order.date || new Date().toLocaleDateString())}</p></div>
+                        <div class="info-box"><span>Package Details</span><p>${order.items || 'Official Merch'}</p></div>
+                        <div class="info-box"><span>Total Value</span><p style="color:${isFailed ? 'var(--invalid)' : 'inherit'}">${totalAmount}</p></div>
+                    </div>
+
+                    ${isFailed ? `
+                        <div style="padding: 30px; text-align: center; background: #fff5f5; border-top: 1px solid #fed7d7;">
+                            <p style="font-size: 12px; color: var(--invalid); font-weight: 800; text-transform: uppercase; margin:0;">
+                                <i class="fas fa-exclamation-circle"></i> Transaction Rejected. Please contact support@tanggo-hervax.com for assistance.
+                            </p>
+                        </div>
+                    ` : `
+                        <div style="padding: 20px 30px 30px;">
+                            <button class="btn-receipt" onclick="viewReceipt(${index})"><i class="fas fa-file-contract"></i> View Electronic Receipt</button>
+                        </div>
+                    `}
+
+                    ${!isFailed ? (isTicket ? `
+                        <div style="padding:40px; text-align:center; border-top:1px solid var(--border); background: #fafafa;">
+                            <div class="qr-code"><i class="fas fa-qrcode" style="font-size: 100px; color:#111;"></i></div>
+                            <p style="font-size: 11px; color: var(--text-muted); margin-top: 15px; font-weight: 700; text-transform:uppercase;">
+                                <i class="fas fa-shield-alt"></i> Digital Entry Token Verified by JiX Systems.
+                            </p>
+                        </div>
+                    ` : `
+                        <div style="padding: 40px; text-align: center; background: #fff; border-top:1px solid var(--border);">
+                            <i class="fas fa-shipping-fast" style="font-size: 30px; color: #f3f4f6; margin-bottom: 10px;"></i>
+                            <p style="font-size: 13px; color: var(--text-muted); margin:0;">Shipping Method: JiX Express Priority</p>
+                        </div>
+                    `) : ''}
+                </div>
+                `;
+            }).join('');
+        }
+
+        function viewReceipt(index) {
+            const orders = JSON.parse(localStorage.getItem('bmth_orders')) || [];
+            const order = orders[index];
+            const content = document.getElementById('receiptContent');
+            const payIcon = getPaymentIcon(order.method || 'Card');
+            
+            content.innerHTML = `
+                <div class="receipt-item"><span>Payment Status</span><strong style="color:var(--success)">VERIFIED</strong></div>
+                <div class="receipt-item"><span>Consignment #</span><strong>${order.orderId || order.id}</strong></div>
+                <div class="receipt-item"><span>Stamp Date</span><strong>${order.date || new Date().toLocaleDateString()}</strong></div>
+                <div class="receipt-item"><span>Payment Channel</span><span>${payIcon} <strong>${order.method || 'Online Transfer'}</strong></span></div>
+                <div class="receipt-item" style="border:none; margin-top:15px; font-size:18px;">
+                    <span>Grand Total</span><strong>${order.amount || order.total}</strong>
+                </div>
+            `;
+            document.getElementById('receiptModal').style.display = 'flex';
+        }
+
+        function closeReceipt() { document.getElementById('receiptModal').style.display = 'none'; }
+        function openInfo(key) {
+            const item = footerData[key];
+            document.getElementById('infoTitle').innerText = item.title;
+            document.getElementById('infoBody').innerHTML = item.body;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+        function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('receiptModal')) closeReceipt();
+            if (event.target == document.getElementById('infoModal')) closeInfo();
+        }
+
+        window.onload = renderApp;
+    </script>
+</body>
+</html>
