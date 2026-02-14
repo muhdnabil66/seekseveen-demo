@@ -13,7 +13,6 @@
             --glass-blur: blur(20px);
             --text-light: #ffffff;
             --text-dim: #cccccc;
-            /* Glass Effect Variable */
             --glass-black: rgba(0, 0, 0, 0.75);
         }
 
@@ -26,13 +25,12 @@
 
         body {
             margin: 0; font-family: 'Segoe UI', sans-serif;
-            background: url('horizon2.png') no-repeat center center fixed;
+            background: url('bgtest.gif') no-repeat center center fixed;
             background-size: cover; color: var(--text-light);
             min-height: 100vh; display: flex; flex-direction: column;
             overflow-x: hidden;
         }
 
-        /* --- PERSONALIZED GLASS HEADER --- */
         .navbar { 
             background: var(--glass-black) !important; 
             backdrop-filter: blur(15px) saturate(180%) !important; 
@@ -106,7 +104,6 @@
         
         .msg-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); border: 2px solid var(--brand-red); padding: 40px; border-radius: 20px; z-index: 9999; display: none; text-align: center; backdrop-filter: blur(20px); width: 80%; max-width: 400px; }
 
-        /* --- PERSONALIZED GLASS FOOTER --- */
         footer { 
             background: var(--glass-black) !important; 
             backdrop-filter: blur(15px) saturate(180%) !important; 
@@ -234,8 +231,7 @@
             document.getElementById('overlay').classList.remove('active');
         }
 
-        // UPDATED MASTER KEY FOR PERSISTENCE
-        const MASTER_KEY = "bmth_master_v8"; 
+        const MASTER_KEY = "bmth_master_v17"; 
         const GLOBAL_LIMIT = 85000;
         const VOUCHER_MAX = 500;
         const VOUCHER_SPEED = 3000; 
@@ -399,7 +395,6 @@
             }
         }
 
-        // --- Live Logic ---
         categories.forEach((cat, idx) => {
             if(cat.speed > 0 && !cat.locked) {
                 setInterval(() => {

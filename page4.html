@@ -10,12 +10,11 @@
         :root {
             --brand-red: #980002;
             --faded-red: #6b0001;
-            /* Glass Effect Variables */
             --glass-bg: rgba(15, 15, 15, 0.75);
             --glass-blur: blur(12px);
             --text-light: #ffffff;
             --text-dim: #cccccc;
-            --star-color: #ffca08; /* Shopee Star Gold */
+            --star-color: #ffca08; 
         }
 
         @font-face { font-family: 'Nightcore Demo'; src: url('Nightcore Demo.ttf'); }
@@ -23,13 +22,12 @@
 
         body {
             margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
-            background: url('horizon2.png') no-repeat center center fixed;
+            background: url('bgtest.gif') no-repeat center center fixed;
             background-size: cover; color: var(--text-light);
             min-height: 100vh; display: flex; flex-direction: column;
             overflow-x: hidden;
         }
 
-        /* Glass Header & Footer - User Preference Applied */
         .navbar, footer {
             background: var(--glass-bg) !important; 
             backdrop-filter: var(--glass-blur) !important;
@@ -44,6 +42,7 @@
             padding: 40px 20px; 
             text-align: center; 
             margin-top: auto;
+            position: relative;
         }
 
         .navbar { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
@@ -59,7 +58,6 @@
         .hamburger { display: none; font-size: 24px; cursor: pointer; color: white; transition: 0.3s; }
         .hamburger:hover { color: var(--brand-red); }
 
-        /* Rating Styles */
         .rating-container { 
             display: flex; 
             align-items: center; 
@@ -76,7 +74,6 @@
         .stars { color: var(--star-color); font-size: 12px; transition: 0.3s; }
         .rating-count { color: var(--text-dim); font-size: 11px; }
 
-        /* NEW: Live Review Notification */
         #live-review-toast {
             position: fixed; bottom: 20px; left: 20px;
             background: var(--glass-bg); backdrop-filter: var(--glass-blur);
@@ -87,7 +84,6 @@
         }
         #live-review-toast.show { transform: translateX(0); }
 
-        /* Sidebar (Menu) */
         .sidebar {
             position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
             background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(25px);
@@ -101,7 +97,6 @@
         .sidebar-link { display: block; padding: 15px; color: white; text-decoration: none; border-bottom: 1px solid #333; transition: 0.3s; font-size: 16px; }
         .sidebar-link:hover { color: var(--brand-red); padding-left: 25px; background: rgba(152,0,2,0.1); }
 
-        /* Cart Sidebar */
         .cart-sidebar {
             position: fixed; right: -400px; top: 0; width: 350px; height: 100vh;
             background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(30px);
@@ -113,11 +108,9 @@
         .cart-item { display: flex; align-items: center; gap: 15px; padding: 12px; background: rgba(255,255,255,0.05); margin-bottom: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
         .checkout-area { border-top: 1px solid #333; padding-top: 20px; margin-top: auto; }
 
-        /* Main Content */
         main { flex: 1; padding: 40px 5%; width: 100%; box-sizing: border-box; }
-        .merch-section { text-align: center; margin-bottom: 50px; }
+        .merch-section { text-align: center; margin-bottom: 50px; position: relative; }
         
-        /* Merch Title Gap Fix */
         .merch-section h1 { margin-bottom: 40px; } 
 
         .merch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
@@ -132,6 +125,23 @@
         .sold-out-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--brand-red); color: white; padding: 5px 12px; font-weight: bold; display: none; z-index: 10; }
         .merch-card.sold-out .sold-out-badge { display: block; }
 
+        .hot-label { position: absolute; top: -10px; right: -10px; background: linear-gradient(45deg, #ff4e50, #f9d423); color: black; font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 4px; z-index: 20; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #fff;
+            color: var(--brand-red);
+            padding: 4px 8px;
+            font-size: 10px;
+            font-weight: bold;
+            border: 1px dashed var(--brand-red);
+            border-radius: 4px;
+            z-index: 15;
+            box-shadow: 2px 2px 0px var(--brand-red);
+        }
+
         .img-container { position: relative; width: 100%; height: 200px; overflow: hidden; border-radius: 8px; }
         .img-container img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; transition: 0.4s ease; }
         .img-back { opacity: 0; transform: scale(0.9); }
@@ -141,7 +151,6 @@
 
         .merch-card h3 { margin-top: 20px !important; margin-bottom: 10px; }
 
-        /* Videos */
         .video-stack { text-align: center; margin-top: 60px; }
         .video-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin-top: 30px; }
         .video-box { 
@@ -157,7 +166,6 @@
         }
         .play-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.3); display: flex; justify-content: center; align-items: center; transition: 0.3s; color: white; font-size: 30px; }
 
-        /* Info Panel */
         .info-panel { 
             background: var(--glass-bg); 
             backdrop-filter: var(--glass-blur); 
@@ -174,19 +182,128 @@
         .info-list li { font-size: 15px; color: #eee; line-height: 2.2; margin-bottom: 8px; }
         .info-list li::before { content: "•"; color: var(--brand-red); font-weight: bold; display: inline-block; width: 1.5em; margin-left: -1em; font-size: 1.2rem; vertical-align: middle; }
 
-        .rec-box { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); text-decoration: none; color: white; transition: 0.3s; font-size: 13px; }
+        .official-sites-container {
+            margin: 40px auto 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        .official-sites-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+        .sites-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .rec-box { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 10px; 
+            background: rgba(255,255,255,0.05); 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            text-decoration: none; 
+            color: white; 
+            transition: 0.3s; 
+            font-size: 13px;
+            min-width: 160px; 
+            box-sizing: border-box;
+        }
         .rec-box:hover { border-color: var(--brand-red); background: rgba(152,0,2,0.2); transform: scale(1.05); }
+        .social-box { min-width: 60px; } /* Smaller width for social icons if needed, but let's keep them uniform as requested */
 
-        /* Modal */
         .modal { display: none; position: fixed; z-index: 5000; inset: 0; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: #080808; width: 100%; max-width: 800px; max-height: 90vh; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--brand-red); border-radius: 12px; overflow-y: auto; scrollbar-width: none; position: relative; }
-        #magnify-container { background: #111; height: 400px; display: flex; justify-content: center; align-items: center; overflow: hidden; cursor: zoom-in; }
-        #modalImg { width: 90%; height: 90%; object-fit: contain; transition: 0.2s; pointer-events: none; }
+        #magnify-container { background: #111; height: 400px; display: flex; justify-content: center; align-items: center; overflow: hidden; cursor: zoom-in; width: 100%; }
+        
+        #modalImg { width: 100%; height: 100%; object-fit: contain; transition: 0.2s; pointer-events: none; }
+        #magnify-container.is-clothing #modalImg { object-fit: cover; } 
+
         .btn-add { background: var(--brand-red); color: white; padding: 15px; border: none; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; text-transform: uppercase; }
         .btn-add:disabled { background: #333; color: #777; cursor: not-allowed; }
         .qty-input { background: #222; border: 1px solid #444; color: white; width: 40px; text-align: center; }
         .size-box { border: 1px solid #444; padding: 10px; cursor: pointer; color: #fff; text-align: center; flex: 1; font-size: 12px; }
         .size-box.active { border-color: var(--brand-red); background: var(--brand-red); }
+
+
+        .spotify-section {
+            margin: 60px auto;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+        }
+        .spotify-player-box {
+            background: #1DB954; 
+            border-radius: 15px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(29, 185, 84, 0.3);
+            text-decoration: none;
+            color: white;
+        }
+        .spotify-player-box:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(29, 185, 84, 0.5);
+        }
+
+        .ads-popup {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 7000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .ads-container {
+            width: 80vmin;
+            height: 80vmin;
+            max-width: 1080px;
+            max-height: 1080px;
+            background: #000;
+            position: relative;
+            border: 2px solid var(--brand-red);
+            border-radius: 20px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .ads-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .ads-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 7001;
+            line-height: 1;
+            text-shadow: 0 0 5px rgba(0,0,0,0.8);
+            transition: 0.2s;
+        }
+        .ads-close:hover {
+            color: var(--brand-red);
+            transform: scale(1.1);
+        }
 
         @media (max-width: 992px) {
             .nav-links { display: none; }
@@ -196,9 +313,26 @@
         }
     </style>
 </head>
-<body onload="loadStocks(); initialRender(); updateCart(); setupIndividualStockTimers(); startLiveRatings();">
+<body onload="loadStocks(); initialRender(); updateCart(); setupIndividualStockTimers(); startLiveRatings(); initAds();">
 
     <div class="sidebar-overlay" id="overlay" onclick="closeAllSidebars()"></div>
+
+    <div id="ads-merch" class="ads-popup">
+        <div class="ads-container" onclick="location.href='#grid'; closeAds('ads-merch')">
+            <img id="ads-merch-img" src="adposter.png" alt="Merch Ad">
+            <div class="ads-close" onclick="event.stopPropagation(); closeAds('ads-merch')">×</div>
+          
+            </div>
+        </div>
+    </div>
+
+    <div id="ads-spotify" class="ads-popup">
+        <div class="ads-container" style="border-color: #1DB954;" onclick="window.open('https://open.spotify.com/playlist/37i9dQZF1DZ06evO0VDZny', '_blank'); closeAds('ads-spotify')">
+            <img id="ads-spotify-img" src="spotify.png" alt="Spotify Ad">
+            <div class="ads-close" onclick="event.stopPropagation(); closeAds('ads-spotify')">×</div>
+            </div>
+        </div>
+    </div>
 
     <div id="live-review-toast">
         <i class="fas fa-user-circle" style="font-size:30px; color:var(--brand-red);"></i>
@@ -225,7 +359,7 @@
     <div class="cart-sidebar" id="cartSidebar">
         <div style="display:flex; justify-content:space-between; align-items:center;">
             <h2 class="nightcore" style="color:var(--brand-red); margin:0;">Cart</h2>
-            <span style="cursor:pointer; font-size:30px" onclick="toggleCart(false)">&times;</span>
+            <span style="cursor:pointer; font-size:30px" onclick="toggleCart(false)">×</span>
         </div>
         <div class="cart-items" id="cart-cont"></div>
         <div class="checkout-area">
@@ -281,6 +415,20 @@
             </div>
         </section>
 
+        <section class="spotify-section" id="spotify-trigger">
+            <h2 class="nightcore" style="font-size: 1.5rem; margin-bottom: 20px;">Now Playing</h2>
+            <a href="https://open.spotify.com/playlist/37i9dQZF1DZ06evO0VDZny" target="_blank" class="spotify-player-box">
+                <div style="display:flex; align-items:center; gap:20px;">
+                    <i class="fab fa-spotify" style="font-size:40px;"></i>
+                    <div style="text-align:left;">
+                        <b style="font-size:18px;">SEEKSEVEEN X BMTH</b><br>
+                        <span style="font-size:14px; opacity:0.8;">Official Concert Setlist</span>
+                    </div>
+                </div>
+                <i class="fas fa-play-circle" style="font-size:30px;"></i>
+            </a>
+        </section>
+
         <section class="info-panel">
             <h3 class="nightcore" style="color:var(--brand-red); margin-top:0;">Why Shop With Us?</h3>
             <ul class="info-list">
@@ -288,16 +436,23 @@
                 <li>Fast local shipping.</li>
                 <li>Real-time automated stock tracking.</li>
             </ul>
-            <div style="display:flex; justify-content:center; flex-wrap:wrap; gap:15px; margin-top:10px;">
+        </section>
+
+        <section class="official-sites-container" id="official-sites">
+            <h3 class="nightcore" style="color:var(--brand-red); margin-bottom:10px;">OFFICIAL SITES</h3>
+            <div class="sites-grid">
                 <a href="https://www.bmthofficial.com/" target="_blank" class="rec-box"><img src="bmthstar2.png" width="20"> BMTH Official</a>
                 <a href="https://www.ticket2u.com.my/event/36510/bring-me-the-horizon" target="_blank" class="rec-box"><img src="ticket2u.png" width="20"> Ticket2u</a>
+                <a href="https://www.facebook.com/bmthofficial" target="_blank" class="rec-box"><i class="fab fa-facebook-f"></i> FACEBOOK</a>
+                <a href="https://www.instagram.com/bringmethehorizon" target="_blank" class="rec-box"><i class="fab fa-instagram"></i> INSTAGRAM</a>
+                <a href="https://twitter.com/bmthofficial" target="_blank" class="rec-box"><i class="fab fa-twitter"></i> TWITTER / X</a>
             </div>
         </section>
     </main>
 
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <span style="position:absolute; right:15px; top:10px; cursor:pointer; font-size:30px; z-index:10;" onclick="closeModal()">&times;</span>
+            <span style="position:absolute; right:15px; top:10px; cursor:pointer; font-size:30px; z-index:10;" onclick="closeModal()">×</span>
             <div id="magnify-container" onmousemove="magnify(event)" onmouseleave="resetMagnify()">
                 <img src="" id="modalImg">
             </div>
@@ -305,7 +460,11 @@
                 <h1 id="modalName" class="nightcore" style="font-size: 20px; margin:0;"></h1>
                 <div class="rating-container" id="modalRating" style="justify-content:flex-start;" onclick="goToRating()"></div>
                 
-                <p id="modalPrice" style="color:#00ff88; font-size:24px; font-weight:bold; margin: 10px 0;"></p>
+                <div id="modalPriceContainer">
+                    <p id="modalPriceSlashed" style="color:#777; font-size:16px; text-decoration:line-through; margin: 10px 0 0;"></p>
+                    <p id="modalPrice" style="color:#00ff88; font-size:24px; font-weight:bold; margin: 0 0 10px;"></p>
+                </div>
+
                 <div id="size-area">
                     <label style="font-size:11px; font-weight:bold;">SELECT SIZE:</label>
                     <div style="display:flex; gap:8px; margin:10px 0 20px;">
@@ -339,7 +498,7 @@
     </footer>
 
     <script>
-        const hasReset_v1 = "bmth_stable_v8"; 
+        const hasReset_v1 = "bmth_stable_v17"; 
         const stockInitialValues = {
             1: { S: 390, M: 200, L: 450, XL: 780 },
             2: { S: 777, M: 777, L: 777, XL: 777 },
@@ -354,39 +513,65 @@
         const stockSpeeds = { 1: 100, 2: 20, 3: 80, 4: 90, 5: 100, 6: 170, 7: 500, 8: 100 };
 
         let products = [
-            { id: 1, name: 'NO LVE LIKE UR OWN LSLEEVE', price: 299, hasSize: true, img: 'swshirt.png', imgB: 'swshirt2.png', rating: 4.2, reviewCount: 429 },
-            { id: 2, name: 'SEEKSEVEEN x BMTHKL', price: 399, hasSize: true, img: 'ssxbmthv2f.png', imgB: 'ssxbmthv1b.png', rating: 3.8, reviewCount: 56 },
-            { id: 3, name: 'DYING TO LIVE HOODIE', price: 499, hasSize: true, img: 'hoodie1f.png', imgB: 'hoodie1b.png', rating: 4.1, reviewCount: 440 },
-            { id: 4, name: 'SOF HOODIE', price: 599, hasSize: true, img: 'hoodie2f.png', imgB: 'hoodie2b.png', rating: 3.9, reviewCount: 45 },
-            { id: 5, name: 'DREAMSEEKER BEANIE', price: 119, hasSize: false, img: 'topi.png', imgB: 'topi2.png', rating: 2.7, reviewCount: 749 },
-            { id: 6, name: 'YOUTOPIA CAMO CAP', price: 299, hasSize: false, img: 'cap.png', imgB: 'cap2.png', rating: 4.3, reviewCount: 643 },
-            { id: 7, name: 'BMTH NECKLACE', price: 999, hasSize: false, img: 'necklace.png', imgB: 'necklace2.png', rating: 3.3, reviewCount: 17 },
-            { id: 8, name: 'ANOMALI BMTH', price: 99, hasSize: false, img: 'keychainf.png', imgB: 'keychainb.png', rating: 1.7, reviewCount: 932 }
+            { id: 1, name: 'NO LVE LIKE UR OWN LSLEEVE', price: 299, hasSize: true, img: 'swshirt.png', imgB: 'swshirt2.png', rating: 4.2, reviewCount: 429, discount: 20 },
+            { id: 2, name: 'SEEKSEVEEN x BMTHKL', price: 399, hasSize: true, img: 'ssxbmthv2f.png', imgB: 'ssxbmthv1b.png', rating: 3.8, reviewCount: 56, discount: 53.7 },
+            { id: 3, name: 'DYING TO LIVE HOODIE', price: 499, hasSize: true, img: 'hoodie1f.png', imgB: 'hoodie1b.png', rating: 4.1, reviewCount: 440, hot: true, discount: 20 },
+            { id: 4, name: 'SOF HOODIE', price: 599, hasSize: true, img: 'hoodie2f.png', imgB: 'hoodie2b.png', rating: 3.9, reviewCount: 45, discount: 15.2 },
+            { id: 5, name: 'DREAMSEEKER BEANIE', price: 119, hasSize: false, img: 'topi.png', imgB: 'topi2.png', rating: 2.7, reviewCount: 749, discount: 7 },
+            { id: 6, name: 'YOUTOPIA CAMO CAP', price: 299, hasSize: false, img: 'cap.png', imgB: 'cap2.png', rating: 4.3, reviewCount: 643, hot: true, discount: 20 },
+            { id: 7, name: 'BMTH NECKLACE', price: 999, hasSize: false, img: 'necklace.png', imgB: 'necklace2.png', rating: 3.3, reviewCount: 17, discount: 61.6 },
+            { id: 8, name: 'ANOMALI BMTH', price: 99, hasSize: false, img: 'keychainf.png', imgB: 'keychainb.png', rating: 1.7, reviewCount: 932, discount: 33.8 }
         ];
 
         let stocks = {};
         let cart = JSON.parse(localStorage.getItem('bmth_cart')) || [];
         let curr = null, selSize = 'M', mQty = 1;
 
-        // Navigation to Ratings
+        let spotifyAdsTriggered = false;
+        function initAds() {
+  
+            setTimeout(() => {
+                document.getElementById('ads-merch').style.display = 'flex';
+            }, 3000);
+
+            window.addEventListener('scroll', () => {
+                // Spotify Ad Trigger
+                const spotifyTrigger = document.getElementById('spotify-trigger');
+                if(spotifyTrigger) {
+                    const pos = spotifyTrigger.getBoundingClientRect();
+                    if (pos.top < window.innerHeight && !spotifyAdsTriggered) {
+                        document.getElementById('ads-spotify').style.display = 'flex';
+                        spotifyAdsTriggered = true;
+                    }
+                }
+
+                const sitesSection = document.getElementById('official-sites');
+                if(sitesSection) {
+                    const rect = sitesSection.getBoundingClientRect();
+           
+                    if (rect.top < window.innerHeight - 50) {
+                        sitesSection.classList.add('visible');
+                    } else {
+                        sitesSection.classList.remove('visible');
+                    }
+                }
+            });
+        }
+        function closeAds(id) { document.getElementById(id).style.display = 'none'; }
+
         function goToRating(id) {
             const targetId = id || (curr ? curr.id : 1);
             localStorage.setItem('selected_rating_id', targetId);
             window.location.href = 'rating.html';
         }
 
-        // Live Rating Simulation Logic
         function startLiveRatings() {
             setInterval(() => {
-                if (Math.random() > 0.85) { // 15% chance every 4 seconds
+                if (Math.random() > 0.85) {
                     const p = products[Math.floor(Math.random() * products.length)];
                     p.reviewCount++;
-                    
-                    // Update UI
                     const countEl = document.querySelector(`#p-${p.id} .rating-count`);
                     if(countEl) countEl.innerText = `(${p.reviewCount})`;
-
-                    // Show Toast
                     showToast(p.name);
                 }
             }, 4000);
@@ -397,7 +582,6 @@
             const toast = document.getElementById('live-review-toast');
             document.getElementById('toast-name').innerText = names[Math.floor(Math.random() * names.length)];
             document.getElementById('toast-product').innerText = prodName;
-            
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
@@ -405,7 +589,11 @@
         function loadStocks() {
             const saved = localStorage.getItem('bmth_stocks');
             if (saved && localStorage.getItem('bmth_ver') === hasReset_v1) { stocks = JSON.parse(saved); } 
-            else { stocks = JSON.parse(JSON.stringify(stockInitialValues)); saveStocks(); localStorage.setItem('bmth_ver', hasReset_v1); }
+            else { 
+                stocks = JSON.parse(JSON.stringify(stockInitialValues)); 
+                saveStocks(); 
+                localStorage.setItem('bmth_ver', hasReset_v1); 
+            }
         }
 
         function generateStars(rating) {
@@ -421,8 +609,11 @@
         function initialRender() {
             const g = document.getElementById('grid'); g.innerHTML = '';
             products.forEach(p => {
+                const discountedPrice = p.price * (1 - p.discount/100);
                 g.innerHTML += `
                 <div class="merch-card" id="p-${p.id}" onclick="openM(${p.id})">
+                    ${p.hot ? '<div class="hot-label">HOT SELLING</div>' : ''}
+                    <div class="discount-badge">${p.discount}% OFF</div>
                     <div class="sold-out-badge">SOLD OUT</div>
                     <div class="img-container"><img src="${p.img}" class="img-front"><img src="${p.imgB}" class="img-back"></div>
                     <h3 class="nightcore" style="color:white; font-size:13px;">${p.name}</h3>
@@ -430,7 +621,10 @@
                         <div class="stars">${generateStars(p.rating)}</div>
                         <div class="rating-count">(${p.reviewCount})</div>
                     </div>
-                    <p style="color:#00ff88; font-size:14px; margin:5px 0;">RM ${p.price.toFixed(2)}</p>
+                    <div style="margin:5px 0;">
+                        <span style="color:#777; font-size:12px; text-decoration:line-through; margin-right:5px;">RM ${p.price.toFixed(2)}</span>
+                        <span style="color:#00ff88; font-size:14px; font-weight:bold;">RM ${discountedPrice.toFixed(2)}</span>
+                    </div>
                 </div>`;
             });
             updateStockVisuals();
@@ -450,7 +644,15 @@
             curr = products.find(p => p.id === id);
             mQty = 1; document.getElementById('mQty').value = 1;
             document.getElementById('modalName').innerText = curr.name;
-            document.getElementById('modalPrice').innerText = 'RM ' + curr.price.toFixed(2);
+            
+            const container = document.getElementById('magnify-container');
+            if(curr.id <= 4) container.classList.add('is-clothing');
+            else container.classList.remove('is-clothing');
+
+            const discPrice = curr.price * (1 - curr.discount/100);
+            document.getElementById('modalPriceSlashed').innerText = 'RM ' + curr.price.toFixed(2);
+            document.getElementById('modalPrice').innerText = 'RM ' + discPrice.toFixed(2);
+            
             document.getElementById('modalImg').src = curr.img;
             document.getElementById('size-area').style.display = curr.hasSize ? 'block' : 'none';
             document.getElementById('modalRating').innerHTML = `<div class="stars">${generateStars(curr.rating)}</div><div class="rating-count">(${curr.reviewCount} Reviews)</div>`;
@@ -486,7 +688,13 @@
             const sz = curr.hasSize ? selSize : 'N/A';
             if(curr.hasSize) stocks[curr.id][selSize] -= mQty; else stocks[curr.id].qty -= mQty;
             const ex = cart.find(i => i.id === curr.id && i.size === sz);
-            if(ex) ex.q += mQty; else cart.push({...curr, size: sz, q: mQty});
+            const sellingPrice = curr.price * (1 - curr.discount/100);
+            
+            if(ex) {
+                ex.q += mQty;
+            } else {
+                cart.push({...curr, price: sellingPrice, size: sz, q: mQty});
+            }
             saveStocks(); updateCart(); closeModal(); toggleCart(true); updateStockVisuals();
         }
 
@@ -495,7 +703,7 @@
             localStorage.setItem('bmth_cart', JSON.stringify(cart)); 
             cart.forEach((item, i) => {
                 t += item.price * item.q;
-                cont.innerHTML += `<div class="cart-item"><img src="${item.img}" width="40"><div style="flex:1; font-size:12px;"><b>${item.name}</b><br>RM ${item.price} x ${item.q}</div><button onclick="removeI(${i})" style="color:red; background:none; border:none; cursor:pointer; font-size:20px;">&times;</button></div>`;
+                cont.innerHTML += `<div class="cart-item"><img src="${item.img}" width="40"><div style="flex:1; font-size:12px;"><b>${item.name}</b><br>RM ${item.price.toFixed(2)} x ${item.q}</div><button onclick="removeI(${i})" style="color:red; background:none; border:none; cursor:pointer; font-size:20px;">×</button></div>`;
             });
             document.getElementById('total-price').innerText = 'Total: RM ' + t.toFixed(2);
             document.getElementById('cart-count').innerText = cart.reduce((a,b) => a+b.q, 0);

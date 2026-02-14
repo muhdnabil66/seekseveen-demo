@@ -11,7 +11,6 @@
             --glass-bg: rgba(15, 15, 15, 0.8);
             --glass-blur: blur(20px);
             --text-light: #ffffff;
-            /* Personalized Glass Effect Variables */
             --glass-header-footer: rgba(15, 15, 15, 0.7);
         }
 
@@ -27,7 +26,6 @@
 
         .nightcore { font-family: 'Nightcore Demo', Impact, sans-serif; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* --- PERSONALIZED GLASS HEADER --- */
         .navbar {
             background: var(--glass-header-footer) !important;
             backdrop-filter: blur(15px) saturate(180%) !important;
@@ -40,7 +38,6 @@
         .logo1 { height: 30px; }
         .nav-links a { color: white; text-decoration: none; font-weight: bold; font-size: 13px; text-transform: uppercase; }
 
-        /* --- LAYOUT --- */
         .checkout-container {
             max-width: 1200px; margin: 30px auto;
             display: grid; grid-template-columns: 1.5fr 1fr; gap: 25px; padding: 0 20px;
@@ -98,7 +95,6 @@
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
         #reminder-box { background: rgba(20, 20, 20, 0.6); backdrop-filter: blur(25px); border: 1px solid var(--brand-red); padding: 40px; border-radius: 20px; text-align: center; max-width: 400px; }
 
-        /* --- PERSONALIZED GLASS FOOTER --- */
         footer {
             background: var(--glass-header-footer) !important;
             backdrop-filter: blur(15px) saturate(180%) !important;
@@ -317,17 +313,14 @@
             updateFinalTotal();
         }
 
-        // UPDATED PLACE ORDER LOGIC FOR PAYMENT GATEWAY
         function placeOrder() { 
             document.getElementById('loading-overlay').style.display = 'flex'; 
 
-            // Prepare order summary to pass to the next page
             const cart = JSON.parse(localStorage.getItem('bmth_cart')) || [];
             const orderID = "SSV-" + Math.floor(100000 + Math.random() * 900000);
             const grandTotal = (cartSubtotal + currentShipping).toFixed(2);
             const itemsSummary = cart.map(item => `${item.name} (x${item.q})`).join(', ');
 
-            // Store pending order details temporarily in localStorage
             const pendingOrder = {
                 orderID: orderID,
                 total: grandTotal,
@@ -336,7 +329,6 @@
             };
             localStorage.setItem('pendingOrder', JSON.stringify(pendingOrder));
 
-            // Redirect to payment.html after a processing delay
             setTimeout(() => { 
                 window.location.href = "payment.html"; 
             }, 3000); 

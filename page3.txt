@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing & Seats | SeekSeveen</title>
+    <link rel="icon" type="image/png" href="bmthrednobg2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --glass-bg: rgba(15, 15, 15, 0.7); 
+            --glass-blur: blur(20px);
+            --text-light: #ffffff;
+            --text-dim: #cccccc;
+            --glass-black: rgba(0, 0, 0, 0.75);
+        }
+
+        @font-face {
+            font-family: 'Another Danger';
+            src: url('Another Danger Slanted - Demo.otf') format('opentype');
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; font-family: 'Segoe UI', sans-serif;
+            background: url('bgtest.gif') no-repeat center center fixed;
+            background-size: cover; color: var(--text-light);
+            min-height: 100vh; display: flex; flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .navbar { 
+            background: var(--glass-black) !important; 
+            backdrop-filter: blur(15px) saturate(180%) !important; 
+            -webkit-backdrop-filter: blur(15px) saturate(180%) !important; 
+            padding: 15px 30px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 2000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar img { height: 40px; width: auto; cursor: pointer; }
+        
+        .nav-right { display: flex; align-items: center; gap: 25px; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { color: white; text-decoration: none; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        .nav-links a:hover { color: var(--brand-red); }
+
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: white; }
+
+        .sidebar {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(25px);
+            z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 20px; border-left: 2px solid var(--brand-red);
+        }
+        .sidebar.active { right: 0; }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3500; display: none; }
+        .sidebar-overlay.active { display: block; }
+
+        main { flex: 1; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; text-align: center; }
+        .danger-title { font-family: 'Another Danger', sans-serif; font-size: clamp(2rem, 8vw, 3.5rem); letter-spacing: 2px; margin-bottom: 10px; }
+
+        #sold-out-msg, #purchase-msg { 
+            position: fixed; top: 90px; left: 50%; transform: translateX(-50%); 
+            width: 90%; max-width: 800px; 
+            background: rgba(20, 20, 20, 0.8); 
+            border: 1px solid var(--brand-red);
+            text-align: center; padding: 15px; z-index: 1500; display: none; 
+            border-radius: 15px; backdrop-filter: var(--glass-blur); 
+            color: #fff; box-shadow: 0 0 20px rgba(152, 0, 2, 0.3);
+        }
+
+        .live-counter-box { background: rgba(0, 0, 0, 0.5); backdrop-filter: var(--glass-blur); padding: 15px 30px; border-radius: 15px; display: inline-block; border: 1px solid rgba(255,255,255,0.1); font-size: clamp(1.5rem, 5vw, 2.5rem); color: #00ff00; font-weight: bold; letter-spacing: 5px; }
+        
+        .slider-container { display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; scrollbar-width: none; -ms-overflow-style: none; }
+        .slider-container::-webkit-scrollbar { display: none; }
+        
+        .seat-card { min-width: 180px; height: 90px; background: rgba(255,255,255,0.05); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: 0.4s; cursor: pointer; flex-shrink: 0; }
+        .seat-card:hover { border-color: var(--brand-red); transform: scale(1.05); background: rgba(152,0,2,0.2); }
+        .seat-card h3 { font-family: 'Another Danger', sans-serif; font-size: 1.3rem; margin: 0; }
+
+        .voucher-box { padding: 15px 25px; background: rgba(0,0,0,0.6); backdrop-filter: var(--glass-blur); border: 2px dashed var(--brand-red); border-radius: 15px; display: flex; justify-content: space-between; align-items: center; max-width: 500px; margin: 20px auto; gap: 10px; }
+        .btn-claim { background: var(--brand-red); color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; flex-shrink: 0; transition: 0.3s; }
+        .btn-claim:disabled { background: #555 !important; cursor: not-allowed; opacity: 0.7; }
+
+        .pricing-list-container { background: rgba(0,0,0,0.7); backdrop-filter: var(--glass-blur); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); margin-top: 20px; }
+        .table-wrapper { overflow-x: auto; width: 100%; margin-top: 20px; -webkit-overflow-scrolling: touch; }
+        
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { font-family: 'Another Danger', sans-serif; font-size: 1.4rem; padding: 15px; border-bottom: 2px solid var(--brand-red); color: var(--brand-red); }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; font-size: 14px; }
+        tbody tr:hover td { background: rgba(152, 0, 2, 0.15); cursor: pointer; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 3000; padding: 20px; }
+        .modal-box { background: rgba(15,15,15,0.9); border: 1px solid var(--brand-red); border-radius: 20px; width: 100%; max-width: 800px; display: flex; overflow: hidden; max-height: 90vh; }
+        .modal-left { width: 50%; }
+        .modal-right { width: 50%; padding: 30px; display: flex; flex-direction: column; justify-content: center; text-align: left; }
+        .modal-img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .btn-buy { background: var(--brand-red); color: white; padding: 15px; border-radius: 10px; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; text-align: center; margin-top: 10px; width: 100%; }
+        
+        .msg-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); border: 2px solid var(--brand-red); padding: 40px; border-radius: 20px; z-index: 9999; display: none; text-align: center; backdrop-filter: blur(20px); width: 80%; max-width: 400px; }
+
+        footer { 
+            background: var(--glass-black) !important; 
+            backdrop-filter: blur(15px) saturate(180%) !important; 
+            -webkit-backdrop-filter: blur(15px) saturate(180%) !important; 
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 40px 20px; text-align: center; margin-top: auto; 
+        }
+        .footer-links { margin-bottom: 15px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .footer-links a { color: #fff; text-decoration: none; font-size: 13px; transition: 0.3s; }
+
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .hamburger { display: block; }
+        }
+
+        @media (max-width: 768px) {
+            .modal-box { flex-direction: column; max-width: 450px; }
+            .modal-left, .modal-right { width: 100%; }
+            .modal-left { height: 200px; }
+            .modal-right { padding: 20px; text-align: center; }
+            .danger-title { font-size: 2.5rem; }
+            .voucher-box { flex-direction: column; text-align: center; }
+            .voucher-box div { text-align: center !important; }
+        }
+
+        .modal-btn-sidebar { background:none; text-align:left; border-bottom:1px solid #333; color: white; text-decoration: none; padding: 12px; font-weight: bold; display: block; transition: 0.3s; }
+        .modal-btn-sidebar:hover { color: var(--brand-red); }
+    </style>
+</head>
+<body>
+
+    <div id="sold-out-msg"><i class="fas fa-exclamation-triangle"></i> Event maximum capacity reached. Contact help.und2@gmail.com</div>
+    <div id="purchase-msg"><i class="fas fa-check-circle" style="color:var(--brand-red)"></i> You already purchased. Thank you for trusting SeekSeveen.</div>
+
+    <div id="success-claim" class="msg-popup">
+        <i class="fas fa-check-circle" style="color:#00ff00; font-size: 3rem; margin-bottom: 15px;"></i>
+        <h2>VOUCHER CLAIMED!</h2>
+        <p>BMTHKL RM50 OFF will be available at checkout.</p>
+    </div>
+
+    <div class="sidebar-overlay" id="overlay" onclick="closeSidebars()"></div>
+    <div id="mainSidebar" class="sidebar">
+        <h3 style="text-align: center; color: var(--brand-red); font-family: sans-serif; letter-spacing: 2px;">MENU</h3>
+        <div style="display: flex; flex-direction: column; margin-top: 30px; gap: 5px;">
+            <a href="index.html" class="modal-btn-sidebar">Home</a>
+            <a href="page2.html" class="modal-btn-sidebar">Map</a>
+            <a href="page4.html" class="modal-btn-sidebar">Shop</a>
+            <a href="help.html" class="modal-btn-sidebar">Contact</a>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" alt="SEEKSEVEEN"></a>
+        <div class="nav-right">
+            <nav class="nav-links">
+                <a href="page2.html">MAP</a>
+                <a href="page4.html">SHOP</a>
+                <a href="help.html">CONTACT</a>
+            </nav>
+            <i class="fas fa-bars hamburger" onclick="openSidebar('mainSidebar')"></i>
+        </div>
+    </header>
+
+    <main>
+        <h1 class="danger-title">SELECT YOUR SEAT</h1>
+        <div class="slider-container" id="seat-slider"></div>
+
+        <div class="voucher-box">
+            <div style="text-align: left;">
+                <h3 style="margin:0; color:var(--brand-red);">BMTHKL RM50 OFF</h3>
+                <p style="font-size: 11px; color: var(--text-dim); margin: 3px 0 0 0;">Remaining: <span id="v-count">0</span>/<span id="v-total">500</span></p>
+            </div>
+            <button id="claim-btn" class="btn-claim" onclick="claimVoucher()">CLAIM NOW</button>
+        </div>
+
+        <div style="margin: 20px 0 40px 0;">
+            <span style="font-size: 12px; font-weight: bold; letter-spacing: 2px; display: block;">TOTAL TICKET SOLD</span>
+            <div class="live-counter-box" id="total-sold-count">000,000</div>
+        </div>
+
+        <div class="pricing-list-container">
+            <h2 class="danger-title" style="font-size: 2.2rem;">PRICE LIST</h2>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>CATEGORY</th><th>PRICE</th><th>STATUS</th><th>TICKET SOLD</th></tr>
+                    </thead>
+                    <tbody id="table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <div id="seat-modal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="modal-left"><img src="" id="modal-img" class="modal-img"></div>
+            <div class="modal-right">
+                <h2 id="modal-cat" class="danger-title" style="font-size: 2.2rem; color: var(--brand-red); margin: 0;"></h2>
+                <h3 id="modal-price" style="font-size: 1.5rem; margin: 10px 0;"></h3>
+                <p id="modal-note" style="font-size: 14px; color: #aaa; margin-bottom: 15px;"></p>
+                <div id="modal-actions" style="display: flex; flex-direction: column;">
+                    <button onclick="goToTicket()" class="btn-buy" id="modal-buy-btn">BUY NOW</button>
+                    <button onclick="closeModal()" id="modal-close-btn" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 12px; border-radius: 10px; cursor:pointer; width:100%; margin-top:12px; font-weight:bold;">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Terms & Conditions</a>
+            <a href="help.html">Help & Support</a>
+            <a href="privacy.html">Privacy Policy</a>
+        </div>
+        <p style="color:var(--text-dim); font-size:12px; margin: 0;">© 2026 Und Performance Group. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function openSidebar(id) {
+            document.getElementById(id).classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+        function closeSidebars() {
+            document.querySelectorAll('.sidebar').forEach(s => s.classList.remove('active'));
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        const MASTER_KEY = "bmth_master_v15"; 
+        const GLOBAL_LIMIT = 85000;
+        const VOUCHER_MAX = 500;
+        const VOUCHER_SPEED = 3000; 
+        const VOUCHER_MIN_DROP = 1;
+        const VOUCHER_MAX_DROP = 6;
+
+        let selectedCatId = null;
+
+        const categories = [
+            { id: 0, name: "Standard", price: 499, limit: 55000, minInc: 2, maxInc: 50, speed: 1000, img: "standard.png" },
+            { id: 1, name: "Bronze",   price: 699, limit: 14750, minInc: 1, maxInc: 35, speed: 1000, img: "bronze.png" },
+            { id: 2, name: "Silver",   price: 999, limit: 7000, minInc: 3, maxInc: 25, speed: 5000, img: "silver.png" },
+            { id: 3, name: "Gold",     price: 1699, limit: 5000, minInc: 5, maxInc: 15, speed: 4000, img: "gold.png" },
+            { id: 4, name: "Platinum", price: 2999, limit: 3000,  minInc: 2, maxInc: 8, speed: 9000, img: "platinum.png" },
+            { id: 5, name: "VIP",      price: 4999, limit: 200,   minInc: 1, maxInc: 3, speed: 2000, img: "vip.png" },
+            { id: 6, name: "VVIP",     price: 6999, limit: 50,    minInc: 1, maxInc: 2, speed: 15000, img: "vvip.png" },
+            { id: 7, name: "VVVIP",    price: 0,    limit: 0,      minInc: 0, maxInc: 0, speed: 0,    img: "vvvip.png", locked: true }
+        ];
+
+        function getMaster() {
+            let data = JSON.parse(localStorage.getItem(MASTER_KEY));
+            if (!data) {
+                data = {
+                    catSold: Array(categories.length).fill(0),
+                    vouchers: VOUCHER_MAX,
+                    totalSold: 0,
+                    isClaimed: false,
+                    userPurchased: false,
+                    purchasedCatId: null
+                };
+                localStorage.setItem(MASTER_KEY, JSON.stringify(data));
+            }
+            return data;
+        }
+
+        function updateUI() {
+            const data = getMaster();
+            const table = document.getElementById('table-body');
+            const slider = document.getElementById('seat-slider');
+            
+            if (data.userPurchased) {
+                document.getElementById('purchase-msg').style.display = 'block';
+                document.getElementById('sold-out-msg').style.display = 'none';
+            } else if (data.totalSold >= GLOBAL_LIMIT) {
+                document.getElementById('sold-out-msg').style.display = 'block';
+            }
+
+            if (slider.innerHTML === "") {
+                categories.forEach(cat => {
+                    let card = document.createElement('div');
+                    card.className = 'seat-card';
+                    card.onclick = () => openModal(cat.id);
+                    card.innerHTML = `<h3>${cat.name}</h3>`;
+                    slider.appendChild(card);
+                });
+            }
+
+            table.innerHTML = '';
+            categories.forEach((cat, idx) => {
+                let currentSold = data.catSold[idx];
+                let isPurchased = data.userPurchased && data.purchasedCatId == idx;
+                let isSoldOut = currentSold >= cat.limit || (data.totalSold >= GLOBAL_LIMIT && !cat.locked);
+                let status = "";
+                let color = "";
+
+                if (cat.locked) { status = "LOCKED"; color = "red"; }
+                else if (isPurchased) { status = "PURCHASED"; color = "#0f0"; }
+                else if (data.userPurchased) { status = "NOT AVAILABLE"; color = "rgba(152, 0, 2, 0.5)"; }
+                else if (isSoldOut) { status = "SOLD OUT"; color = "red"; }
+                else { status = "AVAILABLE"; color = "#0f0"; }
+
+                let row = table.insertRow();
+                row.onclick = () => openModal(idx);
+                
+                if (cat.locked) {
+                    row.innerHTML = `<td><b>${cat.name}</b></td><td style="color:red">LOCKED</td><td style="color:red;font-weight:bold">LOCKED</td><td style="color:red">LOCKED</td>`;
+                } else {
+                    row.innerHTML = `<td><b>${cat.name}</b></td><td>RM ${cat.price}</td><td style="color:${color};font-weight:bold">${status}</td><td>${currentSold.toLocaleString()}</td>`;
+                }
+            });
+
+            document.getElementById('total-sold-count').innerText = data.totalSold.toLocaleString().padStart(6, '0');
+            document.getElementById('v-count').innerText = data.vouchers;
+            
+            const btn = document.getElementById('claim-btn');
+            if (data.isClaimed) {
+                btn.disabled = true;
+                btn.innerText = "CLAIMED";
+                btn.style.background = "#555";
+            } else if (data.vouchers <= 0) {
+                btn.disabled = true;
+                btn.innerText = "EXPIRED";
+                btn.style.background = "#555";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "CLAIM NOW";
+                btn.style.background = "var(--brand-red)";
+            }
+        }
+
+        function openModal(id) {
+            selectedCatId = id;
+            const cat = categories[id];
+            const data = getMaster();
+            document.getElementById('modal-img').src = cat.img;
+            document.getElementById('modal-cat').innerText = cat.name;
+            document.getElementById('modal-price').innerText = cat.locked ? "LOCKED" : "RM " + cat.price;
+            
+            const buyBtn = document.getElementById('modal-buy-btn');
+            const closeBtn = document.getElementById('modal-close-btn');
+            const note = document.getElementById('modal-note');
+            
+            buyBtn.disabled = false;
+            buyBtn.style.display = 'block';
+            closeBtn.style.marginTop = "12px";
+
+            if(cat.locked) {
+                note.innerText = "Reserved category.";
+                buyBtn.style.display = 'none';
+            } else if (data.userPurchased) {
+                if(data.purchasedCatId == id) {
+                    note.innerHTML = `<span style="color:#0f0; font-weight:bold;">PURCHASE SUCCESSFUL</span><br><small>Your ticket was sent to your email.</small>`;
+                    buyBtn.innerText = "PURCHASED";
+                    buyBtn.disabled = true;
+                    buyBtn.style.background = "#555";
+                } else {
+                    note.innerHTML = `<span style="color:red; font-weight:bold;">NOT AVAILABLE</span><br><small>You already purchased a ticket for ${categories[data.purchasedCatId].name}.</small>`;
+                    buyBtn.style.display = 'none';
+                }
+            } else if (data.catSold[id] >= cat.limit || data.totalSold >= GLOBAL_LIMIT) {
+                note.innerHTML = `<span style="color:red; font-weight:bold;">SOLD OUT</span><br><small>This category is no longer available.</small>`;
+                buyBtn.style.display = 'none';
+                closeBtn.style.marginTop = "0px";
+            } else {
+                note.innerText = "Official seating. Tickets issued immediately.";
+                buyBtn.innerText = "BUY NOW";
+                buyBtn.style.background = 'var(--brand-red)';
+                buyBtn.style.display = 'block';
+            }
+            document.getElementById('seat-modal').style.display = 'flex';
+        }
+
+        function closeModal() { document.getElementById('seat-modal').style.display = 'none'; }
+
+        function claimVoucher() {
+            let data = getMaster();
+            if(!data.isClaimed && data.vouchers > 0) {
+                data.isClaimed = true; 
+                data.vouchers--;
+                localStorage.setItem(MASTER_KEY, JSON.stringify(data));
+                document.getElementById('success-claim').style.display = 'block';
+                setTimeout(() => { document.getElementById('success-claim').style.display = 'none'; }, 2000);
+                updateUI();
+            }
+        }
+
+        function goToTicket() {
+            if (selectedCatId !== null) {
+                localStorage.setItem("pending_cat", selectedCatId);
+                window.location.href = "ticket.html";
+            }
+        }
+
+        categories.forEach((cat, idx) => {
+            if(cat.speed > 0 && !cat.locked) {
+                setInterval(() => {
+                    let data = getMaster();
+                    if(data.totalSold < GLOBAL_LIMIT && data.catSold[idx] < cat.limit) {
+                        let inc = Math.floor(Math.random() * (cat.maxInc - cat.minInc + 1)) + cat.minInc;
+                        data.catSold[idx] = Math.min(cat.limit, data.catSold[idx] + inc);
+                        data.totalSold = Math.min(GLOBAL_LIMIT, data.totalSold + inc);
+                        localStorage.setItem(MASTER_KEY, JSON.stringify(data));
+                        updateUI();
+                    }
+                }, cat.speed);
+            }
+        });
+
+        setInterval(() => {
+            let data = getMaster();
+            if (data.vouchers > 0) {
+                let drop = Math.floor(Math.random() * (VOUCHER_MAX_DROP - VOUCHER_MIN_DROP + 1)) + VOUCHER_MIN_DROP;
+                data.vouchers = Math.max(0, data.vouchers - drop);
+                localStorage.setItem(MASTER_KEY, JSON.stringify(data));
+                updateUI();
+            }
+        }, VOUCHER_SPEED);
+
+        updateUI();
+    </script>
+</body>
+</html>

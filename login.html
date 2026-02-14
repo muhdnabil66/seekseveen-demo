@@ -21,7 +21,6 @@
             display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        /* GLASS HEADER */
         .navbar { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 10px 20px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 2000; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
         .auth-container { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px 20px; }
@@ -33,7 +32,6 @@
         }
         .auth-card h2 { color: var(--brand-red); margin-bottom: 25px; text-transform: uppercase; letter-spacing: 2px; }
 
-        /* PROFILE BOX */
         .profile-box {
             background: rgba(255,255,255,0.05); border: 2px solid #2ecc71; padding: 20px;
             border-radius: 10px; display: flex; align-items: center; justify-content: space-between;
@@ -43,13 +41,11 @@
         .profile-info i { font-size: 30px; color: #2ecc71; }
         .tick-mark { color: #2ecc71; font-size: 20px; }
 
-        /* MANUAL FORM */
         #manual-form { display: none; text-align: left; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 5px; font-size: 13px; color: #ccc; }
         .input-group input { width: 100%; padding: 12px; border-radius: 5px; border: 1px solid #444; background: #111; color: white; box-sizing: border-box; }
 
-        /* BACK BUTTON */
         #back-to-profile { 
             display: none; color: #888; cursor: pointer; font-size: 12px; 
             text-transform: uppercase; margin-bottom: 15px; transition: 0.3s;
@@ -63,7 +59,6 @@
         }
         .auth-btn:hover { background: white; color: var(--brand-red); }
 
-        /* GLASS FOOTER (RECOVERED LOGO VERSION) */
         footer { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
             -webkit-backdrop-filter: var(--glass-blur);
@@ -181,7 +176,7 @@
             switchText.style.display = "none";
             titleText.innerText = "Log In";
             selectedUser = null;
-            // Only show back button if there are actually accounts to go back to
+ 
             if (users.length > 0) {
                 backBtn.style.display = "inline-block";
             }

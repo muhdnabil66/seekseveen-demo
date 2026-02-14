@@ -22,7 +22,6 @@
             min-height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* Header */
         .navbar { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
             -webkit-backdrop-filter: var(--glass-blur); border-bottom: 1px solid rgba(255,255,255,0.1); 
@@ -33,7 +32,6 @@
         .header-logo:hover { transform: scale(1.05); }
         .navbar h1 { margin: 0; font-size: 24px; letter-spacing: 2px; text-align: center; }
 
-        /* Footer & Copy Email */
         footer { 
             background: var(--glass-bg); backdrop-filter: var(--glass-blur); 
             padding: 25px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto; 
@@ -49,7 +47,6 @@
         .copy-email-box i { font-size: 14px; color: var(--brand-red); }
         .copy-email-box span { font-size: 13px; color: #ccc; letter-spacing: 0.5px; }
 
-        /* Rest of the styles */
         main {
             max-width: 600px; margin: 50px auto; padding: 30px;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(15px);
@@ -169,7 +166,6 @@
 
     (function() { emailjs.init(PUBLIC_KEY); })();
 
-    // Copy Email Function
     function copyEmail() {
         const email = "help.und2@gmail.com";
         const copyText = document.getElementById("copyText");

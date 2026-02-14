@@ -26,7 +26,6 @@
             flex-direction: column;
         }
 
-        /* Glass Header & Footer */
         header, footer {
             background: var(--glass-bg) !important;
             backdrop-filter: var(--glass-blur) !important;
@@ -183,8 +182,8 @@
     ];
 
     let currentInputRating = 0;
-    // CRITICAL FIX: Ensure ID is always valid or defaults to 1
     const productId = localStorage.getItem('selected_rating_id') || 1;
+    const currentProduct = products.find(x => x.id == productId);
 
     document.getElementById('star-selector').addEventListener('click', (e) => {
         if(e.target.dataset.val) {
@@ -220,42 +219,58 @@
 
         if(!comment) return alert("Please write a comment!");
 
-        const p = products.find(x => x.id == productId);
-        const detail = (p.category === 'apparel') ? "Size: L | Color: Black" : "One Size | Black";
-        
+        const detail = (currentProduct.category === 'apparel') ? "Size: L | Black" : "Standard | Black";
         const reviewObj = { name: finalDisplayName, rating: currentInputRating, text: comment, date: "Today", detail, isUser: true };
 
-        // Save to LocalStorage with specific product key
         let saved = JSON.parse(localStorage.getItem('user_reviews_' + productId)) || [];
         saved.unshift(reviewObj);
         localStorage.setItem('user_reviews_' + productId, JSON.stringify(saved));
 
         renderReviews();
         document.getElementById('form-container').style.display = 'none';
-        
         document.getElementById('success-modal').style.display = 'flex';
+        
         setTimeout(() => {
             document.getElementById('success-modal').style.display = 'none';
             document.getElementById('shop-rating-modal').style.display = 'flex';
         }, 3000);
     }
 
+    function getMockData(rating) {
+        // Logic to generate reviews that match the product's actual score
+        if (rating < 2.5) {
+            return {
+                texts: ["Disappointed with the quality.", "Smaller than expected.", "Shipping took forever.", "Not like the photo.", "Waste of money."],
+                stars: [1, 2, 1, 2, 1]
+            };
+        } else if (rating < 3.5) {
+            return {
+                texts: ["It's okay for the price.", "Decent but has flaws.", "Average quality.", "Took a while to arrive.", "Just fine."],
+                stars: [3, 2, 4, 3, 3]
+            };
+        } else {
+            return {
+                texts: ["Top tier quality.", "Love the fit.", "Fast shipping!", "Fabric feels premium.", "Absolute fire."],
+                stars: [5, 5, 4, 5, 5]
+            };
+        }
+    }
+
     function renderReviews() {
-        const p = products.find(x => x.id == productId);
         const list = document.getElementById('reviews-list');
         list.innerHTML = '';
 
-        // Load saved user reviews first
         const saved = JSON.parse(localStorage.getItem('user_reviews_' + productId)) || [];
         saved.forEach(rev => {
             list.innerHTML += createReviewHTML(rev.name, rev.rating, rev.text, rev.date, rev.detail, true);
         });
 
-        // Add standard mock reviews
-        const mocks = ["Top tier quality.", "Love the fit.", "Fast shipping!", "Fabric feels premium.", "Absolute fire."];
+        const mocks = getMockData(currentProduct.rating);
         const names = ["Ahmad Z.", "Kevin L.", "Sarah M.", "Jason S.", "Nurul H."];
+        const detail = (currentProduct.category === 'apparel') ? "L | Black" : "Standard | Black";
+
         for(let i=0; i < 5; i++) {
-            list.innerHTML += createReviewHTML(names[i], 5, mocks[i], "20 Jan 2026", "L | Black", false);
+            list.innerHTML += createReviewHTML(names[i], mocks.stars[i], mocks.texts[i], "20 Jan 2026", detail, false);
         }
     }
 
@@ -277,22 +292,33 @@
         return h;
     }
 
+    function calculateBars(avg) {
+        // Logic to distribute bar width based on average
+        let distribution = [0,0,0,0,0]; // 5,4,3,2,1
+        if(avg > 4) distribution = [70, 15, 10, 3, 2];
+        else if(avg > 3) distribution = [40, 30, 20, 5, 5];
+        else if(avg > 2) distribution = [15, 20, 30, 25, 10];
+        else distribution = [5, 10, 15, 30, 40];
+        return distribution;
+    }
+
     function init() {
-        const p = products.find(x => x.id == productId);
-        if(!p) return; 
+        if(!currentProduct) return; 
+
+        const bars = calculateBars(currentProduct.rating);
 
         document.getElementById('summary-box').innerHTML = `
             <div class="big-rating"><div style="text-align:center">
-                <h1>${p.rating.toFixed(1)}</h1>
-                <div style="color:var(--star-color); margin:10px 0;">${generateStars(p.rating)}</div>
-                <div style="font-size:12px; color:var(--text-dim);">${p.reviewCount} Ratings</div>
+                <h1>${currentProduct.rating.toFixed(1)}</h1>
+                <div style="color:var(--star-color); margin:10px 0;">${generateStars(currentProduct.rating)}</div>
+                <div style="font-size:12px; color:var(--text-dim);">${currentProduct.reviewCount} Ratings</div>
             </div></div>
-            <div><h2 style="margin:0 0 15px 0; font-size:20px; text-transform:uppercase;">${p.name}</h2>
-            ${[5,4,3,2,1].map(i => `
+            <div><h2 style="margin:0 0 15px 0; font-size:20px; text-transform:uppercase;">${currentProduct.name}</h2>
+            ${[5,4,3,2,1].map((star, idx) => `
                 <div class="bar-container">
-                    <span style="width:35px">${i} <i class="fas fa-star" style="font-size:10px;"></i></span>
-                    <div class="bar-bg"><div class="bar-fill" style="width:${i*12}%"></div></div>
-                    <span style="width:30px; color:var(--text-dim); text-align:right;">${i*12}%</span>
+                    <span style="width:35px">${star} <i class="fas fa-star" style="font-size:10px;"></i></span>
+                    <div class="bar-bg"><div class="bar-fill" style="width:${bars[idx]}%"></div></div>
+                    <span style="width:30px; color:var(--text-dim); text-align:right;">${bars[idx]}%</span>
                 </div>
             `).join('')}
             </div>
@@ -300,7 +326,6 @@
         renderReviews();
     }
 
-    // Run init every time the page loads
     window.onload = init;
 </script>
 

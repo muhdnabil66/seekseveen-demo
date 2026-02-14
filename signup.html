@@ -29,7 +29,6 @@
             min-height: 100vh;
         }
 
-        /* GLASS HEADER */
         .navbar {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -43,7 +42,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* POPUP MESSAGE */
         #success-popup {
             position: fixed;
             top: 20px;
@@ -61,7 +59,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* AUTH CARD */
         .auth-container {
             flex: 1;
             display: flex;
@@ -100,7 +97,6 @@
             color: #ccc;
         }
 
-        /* Email Wrapper for @gmail.com */
         .email-wrapper {
             display: flex;
             align-items: center;
@@ -149,7 +145,6 @@
             font-weight: bold;
         }
 
-        /* CHECKBOXES */
         .check-group {
             display: flex;
             align-items: center;
@@ -184,7 +179,6 @@
             color: var(--brand-red);
         }
 
-        /* GLASS FOOTER */
         footer {
             background: var(--glass-bg);
             backdrop-filter: var(--glass-blur);
@@ -286,7 +280,6 @@
             const repass = document.getElementById('repassword').value;
             const errorMsg = document.getElementById('match-error');
 
-            // 1. Password Match Validation
             if (pass !== repass) {
                 errorMsg.style.display = 'block';
                 return;
@@ -294,10 +287,8 @@
                 errorMsg.style.display = 'none';
             }
 
-            // 2. Save User to "All Users" List for the Login Page Profile View
             let users = JSON.parse(localStorage.getItem('allUsers')) || [];
             
-            // Check if username already exists
             const existing = users.find(u => u.username === user);
             if(existing) {
                 alert("Username already taken!");
@@ -312,11 +303,9 @@
             
             localStorage.setItem('allUsers', JSON.stringify(users));
 
-            // 3. Show Success Popup
             const popup = document.getElementById('success-popup');
             popup.style.display = 'block';
 
-            // 4. Update Layout to show "Success" message
             document.getElementById('auth-card').innerHTML = `
                 <h2 style="color: #2ecc71;">Success!</h2>
                 <div style="padding: 20px 0;">
@@ -325,7 +314,6 @@
                 </div>
             `;
 
-            // 5. Redirect after 5 seconds
             setTimeout(() => {
                 window.location.href = 'login.html';
             }, 5000);

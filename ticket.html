@@ -30,7 +30,6 @@
             min-height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* --- GLASS HEADER (Personalized) --- */
         .navbar { 
             background: var(--glass-black) !important; 
             backdrop-filter: blur(15px) saturate(180%) !important; 
@@ -42,7 +41,6 @@
         }
         .navbar img { height: 40px; width: auto; }
 
-        /* --- MAIN CONTENT --- */
         main { flex: 1; padding: 40px 20px; max-width: 900px; margin: 0 auto; width: 100%; }
 
         .checkout-container {
@@ -100,7 +98,6 @@
         }
         .btn-pay:hover { background: #ff0000; transform: scale(1.02); }
 
-        /* --- REDIRECTION OVERLAY --- */
         #payment-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95);
@@ -109,7 +106,6 @@
             z-index: 9999; text-align: center;
         }
 
-        /* --- CONFIRMATION MODAL --- */
         #confirm-modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.7);
@@ -146,7 +142,6 @@
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* --- GLASS FOOTER (Personalized) --- */
         footer { 
             background: var(--glass-black) !important; 
             backdrop-filter: blur(15px) saturate(180%) !important; 
@@ -267,7 +262,7 @@
     </footer>
 
     <script>
-        const MASTER_KEY = "bmth_master_v8";
+        const MASTER_KEY = "bmth_master_v17";
         
         const categories = [
             { name: "Standard", price: 499, color: "#444" },
@@ -307,12 +302,10 @@
             if(hasVoucher) document.getElementById('row-discount').style.display = 'flex';
         }
 
-        // --- STEP 1: Show Confirmation Pop-up ---
         function showConfirmModal() {
             document.getElementById('confirm-modal').style.display = 'flex';
         }
 
-        // --- STEP 2: Start Loading and Redirect ---
         function startPaymentFlow() {
             // FIX: Prepare the order data for payment.html
             const orderData = {
@@ -322,13 +315,10 @@
                 summary: "BMTH KL LIVE 2027 - " + selectedCategoryName + " Ticket"
             };
             
-            // Save to localStorage so payment.html can retrieve it
             localStorage.setItem('pendingOrder', JSON.stringify(orderData));
 
-            // Hide confirmation modal
             document.getElementById('confirm-modal').style.display = 'none';
             
-            // Show the loading overlay
             const overlay = document.getElementById('payment-overlay');
             const status = document.getElementById('status-text');
             overlay.style.display = 'flex';

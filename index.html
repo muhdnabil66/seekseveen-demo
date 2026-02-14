@@ -12,7 +12,6 @@
             --glass-bg: rgba(15, 15, 15, 0.7);
             --glass-blur: blur(20px);
             --text-light: #ffffff;
-            /* Added explicit glass effect variables for consistency */
             --glass-header-footer: rgba(15, 15, 15, 0.8);
         }
 
@@ -21,13 +20,12 @@
 
         * { box-sizing: border-box; }
         body {
-            margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background-image: url('horizon2.png');
+            margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background-image: url('bgtest.gif');
             background-size: cover; background-attachment: fixed; background-position: center;
             background-color: #000; color: white; overflow-x: hidden;
             min-height: 100vh; display: flex; flex-direction: column;
         }
 
-        /* --- PERSONALIZED GLASS HEADER --- */
         .navbar {
             background: var(--glass-header-footer) !important;
             backdrop-filter: blur(15px) saturate(180%) !important;
@@ -91,7 +89,33 @@
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3500; display: none; }
         .sidebar-overlay.active { display: block; }
 
-        .hero { width: 100%; height: 100vh; background: url('bmthbanneryellow.png') no-repeat center center; background-size: cover; }
+        .hero { 
+            width: 90%; 
+            max-width: 1200px; 
+            height: 450px; 
+            margin: 30px auto; 
+            border-radius: 20px; 
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hero-slider-track {
+            display: flex;
+            width: 400%; 
+            height: 100%;
+            transition: transform 1s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+
+        .hero-slide {
+            width: 25%; 
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        @media (max-width: 768px) { .hero { height: 250px; width: 95%; } }
+
         .section-title { font-family: 'Another Danger Slanted - Demo'; text-align: center; font-size: 40px; color: var(--brand-red); margin: 60px 0 30px; letter-spacing: 5px; }
         .glass-box { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 15px; max-width: 800px; margin: 0 auto 40px; text-align: center; }
 
@@ -137,20 +161,87 @@
         .btn-grey { background: #333; }
         .btn-restricted { background: #444; cursor: not-allowed; opacity: 0.7; box-shadow: none !important; }
 
-        /* --- PERSONALIZED GLASS FOOTER --- */
         footer {
             background: var(--glass-header-footer) !important;
             backdrop-filter: blur(15px) saturate(180%) !important;
             -webkit-backdrop-filter: blur(15px) saturate(180%) !important;
             padding: 40px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: auto;
+            position: relative; z-index: 10;
         }
         .footer-nav a { color: white !important; text-decoration: none !important; margin: 0 15px; font-size: 14px; transition: 0.3s; }
         .footer-nav a:hover { color: var(--brand-red) !important; }
 
         #center-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; border: 2px solid var(--brand-red); padding: 25px; z-index: 9999; display: none; text-align: center; border-radius: 10px; }
+
+        .news-ads-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+            z-index: 8000; display: none; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+        .news-ads-content {
+            width: 70vmin; height: 87.5vmin; 
+            max-width: 1080px; max-height: 1350px;
+            background: #f0f0f0; position: relative;
+            border: 10px double #333; box-shadow: 0 0 50px rgba(0,0,0,1);
+            cursor: pointer; overflow: hidden;
+        }
+        .news-ads-content img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.3) contrast(1.1); }
+        .news-ads-close {
+            position: absolute; top: 10px; right: 15px; font-size: 30px;
+            color: #000; font-weight: bold; cursor: pointer; z-index: 8001;
+        }
+
+        .cookies-bar {
+            position: fixed; bottom: -100px; left: 0; width: 100%;
+            background: var(--glass-header-footer); backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,0.1); padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 5; opacity: 0; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .cookies-bar.show { bottom: 0; opacity: 1; }
+        .cookie-btns { display: flex; gap: 10px; }
+        .btn-cookie { padding: 8px 15px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.3s; border: none; }
+        .btn-accept { background: var(--brand-red); color: white; }
+        .btn-reject { background: #333; color: white; }
+
+        #cookieThankYou {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 10000; display: none; width: 400px; max-width: 90vw;
+        }
     </style>
 </head>
 <body>
+
+    <audio id="bgMusic" loop>
+        <source src="koolaid.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="newspaperAds" class="news-ads-overlay" onclick="closeNewsAds('page3.html')">
+        <div class="news-ads-content">
+            <span class="news-ads-close" onclick="event.stopPropagation(); closeNewsAds()">×</span>
+            <img src="newspaper.png" alt="Special Event Ad">
+        </div>
+    </div>
+
+    <div id="cookiesBar" class="cookies-bar">
+        <div style="font-size: 13px; color: #ccc;">
+            <i class="fas fa-cookie-bite" style="color:var(--brand-red); margin-right:8px;"></i>
+            We use cookies to enhance your experience. By continuing to visit this site you agree to our use of cookies.
+        </div>
+        <div class="cookie-btns">
+            <button class="btn-cookie btn-reject" onclick="handleCookies(false)">REJECT ALL</button>
+            <button class="btn-cookie btn-accept" onclick="handleCookies(true)">ACCEPT ALL</button>
+        </div>
+    </div>
+
+    <div id="cookieThankYou">
+        <div class="glass-box" style="margin:0; border:2px solid var(--brand-red);">
+            <i class="fas fa-check-circle" style="font-size:40px; color:var(--brand-red); margin-bottom:15px;"></i>
+            <h3 style="margin-top:0;">THANK YOU!</h3>
+            <p style="font-size:14px; color:#ccc;">We will make sure your user experience is protected and personalized.</p>
+            <button class="modal-btn" style="width:100%; margin-top:10px;" onclick="document.getElementById('cookieThankYou').style.display='none'">CONTINUE</button>
+        </div>
+    </div>
 
     <div id="center-popup">PLEASE SIGN IN / SIGN UP TO ACCESS THIS FEATURE</div>
     <div class="sidebar-overlay" id="overlay" onclick="closeSidebars()"></div>
@@ -206,7 +297,14 @@
         </div>
     </header>
 
-    <section class="hero"></section>
+    <section class="hero">
+        <div class="hero-slider-track">
+            <div class="hero-slide" style="background-image: url('banner1.png');"></div>
+            <div class="hero-slide" style="background-image: url('banner2.png');"></div>
+            <div class="hero-slide" style="background-image: url('banner3.png');"></div>
+            <div class="hero-slide" style="background-image: url('banner1.png');"></div>
+        </div>
+    </section>
 
     <h2 class="section-title">THE EVENT</h2>
     <div class="glass-box">
@@ -231,7 +329,7 @@
     <h2 class="section-title">OFFICIAL POSTER</h2>
     <div class="poster-box" onclick="openModal('posterModal')">
         <div class="glow-hover" style="border-radius: 10px;">
-            <img src="flyertest.png" alt="Concert Poster" style="width: 450px; max-width: 90vw; border-radius: 8px; display: block;">
+            <img src="poster1.png" alt="Concert Poster" style="width: 450px; max-width: 90vw; border-radius: 8px; display: block;">
         </div>
     </div>
 
@@ -249,7 +347,7 @@
 
     <h2 class="section-title">SOUNDCHECK - BMTH Drown</h2>
     <div class="soundcheck-section">
-        <audio controls><source src="Bring Me The Horizon - Drown.mp3" type="audio/mpeg"></audio>
+        <audio id="soundcheckPlayer" controls><source src="Bring Me The Horizon - Drown.mp3" type="audio/mpeg"></audio>
     </div>
 
     <footer>
@@ -265,7 +363,7 @@
 
     <div id="eventModal" class="modal">
         <div class="glass-box horizontal-modal">
-            <div class="glow-hover" style="border-radius: 10px;"><img src="flyertest.png" style="width: 220px; border-radius: 8px; display: block;"></div>
+            <div class="glow-hover" style="border-radius: 10px;"><img src="poster1.png" style="width: 220px; border-radius: 8px; display: block;"></div>
             <div>
                 <h2 style="font-family:'Another Danger Slanted - Demo'; font-size: 28px; color: var(--brand-red); margin-top:0;">CONCERT DETAILS <i class="fas fa-info-circle info-trigger" id="infoBtn"></i></h2>
                 <div id="ticketingNote" class="ticketing-note-box"><strong>NOTE:</strong> BMTHKL tickets are strictly limited to one (1) registered device only. Multiple purchases from the same device are not permitted.</div>
@@ -287,14 +385,14 @@
 
     <div id="posterModal" class="modal">
         <div class="modal-content">
-            <div class="glow-hover" style="border-radius: 5px;"><img src="copyright.png"></div>
+            <div class="glow-hover" style="border-radius: 5px;"><img src="poster1.png"></div>
             <div style="margin-top: 20px;"><button class="modal-btn btn-grey" onclick="closeModal('posterModal')">CLOSE</button></div>
         </div>
     </div>
 
     <div id="flyerModal" class="modal">
         <div class="modal-content">
-            <div class="glow-hover" style="border-radius: 5px;"><img src="flyertest.png"></div>
+            <div class="glow-hover" style="border-radius: 5px;"><img src="flyer.png"></div>
             <div style="margin-top: 20px;"><button class="modal-btn btn-grey" onclick="closeModal('flyerModal')">CLOSE</button></div>
         </div>
     </div>
@@ -303,8 +401,8 @@
         <div class="modal-content" style="max-width: 900px;">
             <div class="flip-card" id="bCard" onclick="this.classList.toggle('flipped')">
                 <div class="flip-inner">
-                    <div class="flip-front"><img src="brochuretest1.png" style="width:100%; height:100%; object-fit:cover;"></div>
-                    <div class="flip-back"><img src="brochuretest2.png" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div class="flip-front"><img src="brochure1.png" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <div class="flip-back"><img src="brochure2.png" style="width:100%; height:100%; object-fit:cover;"></div>
                 </div>
             </div>
             <div style="display:flex; gap:10px; justify-content:center; margin-top:20px;">
@@ -315,7 +413,7 @@
     </div>
 
     <script>
-        const RESET_VERSION = "bmth_reset_v8";
+        const RESET_VERSION = "bmth_reset_v17";
         if (localStorage.getItem("app_ver") !== RESET_VERSION) {
             localStorage.clear(); localStorage.setItem("app_ver", RESET_VERSION); window.location.reload();
         }
@@ -342,7 +440,6 @@
         function openHistory() {
             const historyList = document.getElementById('historyList');
             const orders = JSON.parse(localStorage.getItem('bmth_orders')) || [];
-            
             if(orders.length === 0) {
                 historyList.innerHTML = '<p style="text-align:center; color:#666;">No purchase history found.</p>';
             } else {
@@ -361,11 +458,55 @@
         function closeHistory() { document.getElementById('historyModal').style.display = 'none'; }
         function showPopup() { const p = document.getElementById('center-popup'); p.style.display = 'block'; setTimeout(() => p.style.display = 'none', 3000); }
 
+        function closeNewsAds(redirectUrl) { 
+            if (redirectUrl) {
+                if (!user) {
+                    showPopup();
+                    return; 
+                }
+            }
+
+            document.getElementById('newspaperAds').style.display = 'none'; 
+            
+            const audio = document.getElementById('bgMusic');
+            if (audio) {
+                audio.play().catch(error => console.log("Music play blocked:", error));
+            }
+
+            setTimeout(() => {
+                document.getElementById('cookiesBar').classList.add('show');
+            }, 800);
+
+            if (redirectUrl && user) window.location.href = redirectUrl;
+        }
+
+        function handleCookies(accepted) {
+            document.getElementById('cookiesBar').classList.remove('show');
+            if (accepted) {
+                setTimeout(() => {
+                    document.getElementById('cookieThankYou').style.display = 'block';
+                }, 400);
+            }
+        }
+
         window.onload = function() {
             const sidebarContent = document.getElementById('sidebar-content');
             const authLinks = document.getElementById('auth-links');
             const navUser = document.getElementById('nav-user-display');
             const eventAction = document.getElementById('event-action-box');
+
+            const bgMusic = document.getElementById('bgMusic');
+            const soundcheck = document.getElementById('soundcheckPlayer');
+            
+            if (soundcheck) {
+                soundcheck.onplay = () => { if(bgMusic) bgMusic.pause(); };
+                soundcheck.onpause = () => { if(bgMusic && !document.getElementById('newspaperAds').offsetParent) bgMusic.play(); };
+                soundcheck.onended = () => { if(bgMusic && !document.getElementById('newspaperAds').offsetParent) bgMusic.play(); };
+            }
+
+            setTimeout(() => {
+                document.getElementById('newspaperAds').style.display = 'flex';
+            }, 3000);
 
             if (user) {
                 authLinks.style.display = 'none'; navUser.style.display = 'inline'; navUser.innerText = user;
@@ -380,6 +521,24 @@
                 sidebarContent.innerHTML = `<a href="login.html" class="modal-btn">Log In</a><a href="signup.html" class="modal-btn" style="background:var(--brand-red);">Sign Up</a>`;
                 document.querySelectorAll('.restricted').forEach(link => { link.style.color = '#555'; link.onclick = (e) => { e.preventDefault(); showPopup(); }; });
             }
+
+            const track = document.querySelector('.hero-slider-track');
+            const slidesCount = 3; 
+            let currentBanner = 0;
+
+            setInterval(() => {
+                currentBanner++;
+                track.style.transition = "transform 1s cubic-bezier(0.65, 0, 0.35, 1)";
+                track.style.transform = `translateX(-${currentBanner * 25}%)`;
+
+                if (currentBanner === slidesCount) {
+                    setTimeout(() => {
+                        track.style.transition = "none";
+                        currentBanner = 0;
+                        track.style.transform = `translateX(0)`;
+                    }, 1000);
+                }
+            }, 4000);
         };
 
         window.onclick = function(e) {

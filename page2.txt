@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map & Directions | SeekSeveen</title>
+    <link rel="icon" type="image/png" href="bmthrednobg2.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --brand-red: #980002;
+            --faded-red: #6b0001;
+            --glass-bg: rgba(15, 15, 15, 0.75);
+            --glass-blur: blur(12px);
+            --text-light: #ffffff;
+            --text-dim: #cccccc;
+        }
+
+        body {
+            margin: 0; font-family: 'Segoe UI', Roboto, sans-serif;
+            background: url('bgtest.gif') no-repeat center center fixed;
+            background-size: cover; color: var(--text-light);
+            min-height: 100vh; display: flex; flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .navbar, footer {
+            background: var(--glass-bg) !important; 
+            backdrop-filter: var(--glass-blur) !important;
+            -webkit-backdrop-filter: var(--glass-blur) !important;
+            z-index: 2000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .navbar { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { color: var(--text-light); text-decoration: none; font-size: 13px; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        .nav-links a:hover { color: var(--brand-red); }
+
+        .hamburger { display: none; font-size: 24px; cursor: pointer; color: white; transition: 0.3s; }
+
+        footer { padding: 40px 20px; text-align: center; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.1); }
+        .footer-links a { color: var(--text-dim); text-decoration: none; margin: 0 15px; font-size: 13px; display: inline-block; }
+
+        .sidebar {
+            position: fixed; top: 0; right: -320px; width: 300px; height: 100%;
+            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(25px);
+            z-index: 4000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 40px 20px; border-left: 2px solid var(--brand-red);
+            visibility: hidden; 
+            pointer-events: none;
+        }
+        .sidebar.active { 
+            right: 0; 
+            visibility: visible; 
+            pointer-events: auto; 
+        }
+        .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 3500; display: none; }
+        .sidebar-overlay.active { display: block; }
+        
+        .sidebar-link {
+            display: block; padding: 15px; color: white; text-decoration: none; 
+            border-bottom: 1px solid #333; transition: 0.3s; font-size: 16px;
+        }
+        .sidebar-link:hover { color: var(--brand-red); padding-left: 25px; border-bottom-color: var(--brand-red); background: rgba(152,0,2,0.1); }
+
+        main { flex: 1; padding: 40px 5%; max-width: 1200px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .glass-panel { 
+            background: rgba(0, 0, 0, 0.65); backdrop-filter: var(--glass-blur); 
+            padding: 30px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; 
+        }
+
+        .content-grid { display: grid; grid-template-columns: 1fr 380px; gap: 30px; margin-top: 20px; }
+        .map-box { height: 400px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        .info-sidebar { display: flex; flex-direction: column; gap: 10px; }
+        input { padding: 12px; border-radius: 6px; border: 1px solid #444; background: #000; color: white; width: 100%; box-sizing: border-box; }
+        
+        .btn { background: var(--brand-red); color: white; padding: 14px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; width: 100%; text-align: center; text-decoration: none; display: block; }
+        .btn:hover { filter: brightness(1.2); transform: scale(1.02); }
+
+        .transport-link { text-decoration: none; color: white; flex: 1; text-align: center; transition: 0.3s; border-radius: 10px; padding: 10px; }
+        .transport-link:hover { background: rgba(152,0,2,0.3); transform: scale(1.1); box-shadow: 0 0 15px var(--brand-red); }
+
+        .details-container { margin-top: 20px; line-height: 1.6; }
+        .details-section { margin-bottom: 25px; }
+        .details-section h3 { color: var(--brand-red); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-bottom: 15px; text-transform: uppercase; font-size: 18px; }
+        .details-section h4 { color: #fff; margin: 15px 0 5px 0; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+        .details-section p, .details-section ul { color: var(--text-dim); font-size: 14px; margin: 5px 0; }
+        .details-section ul { padding-left: 20px; }
+        .details-section ul li { margin-bottom: 8px; }
+        .highlight-text { color: var(--text-light); font-weight: bold; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); display: none; justify-content: center; align-items: center; z-index: 5000; }
+        .modal-box { background: rgba(15,15,15,0.98); border: 1px solid var(--brand-red); border-radius: 20px; overflow: hidden; text-align: center; width: 400px; max-width: 90%; }
+
+        @media (max-width: 992px) {
+            .nav-links { display: none; }
+            .hamburger { display: block; } /* Show hamburger on Tablet/Phone */
+            .content-grid { grid-template-columns: 1fr; }
+            .map-box { order: 1; }
+            .info-sidebar { order: 2; }
+        }
+
+        @media (max-width: 600px) {
+            main { padding: 20px 3%; }
+            .glass-panel { padding: 20px; }
+            .map-box { height: 300px; }
+        }
+    </style>
+</head>
+<body onload="showLocModal()">
+
+    <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <div id="mainSidebar" class="sidebar">
+        <h3 style="text-align: center; color: var(--brand-red); letter-spacing: 2px;">MENU</h3>
+        <div style="margin-top: 30px;">
+            <a href="index.html" class="sidebar-link">Home</a>
+            <a href="page3.html" class="sidebar-link">Price</a>
+            <a href="page4.html" class="sidebar-link">Shop</a>
+            <a href="help.html" class="sidebar-link">Contact</a>
+        </div>
+    </div>
+
+    <div id="loc-modal" class="modal-overlay">
+        <div class="modal-box" style="padding: 30px;">
+            <h2 style="color:var(--brand-red)">Detect Location?</h2>
+            <p style="color:var(--text-dim); margin-bottom: 25px;">Provide the fastest route to Bukit Jalil National Stadium.</p>
+            <button class="btn" onclick="allowLoc()">Yes, Locate Me</button>
+            <button onclick="closeLoc()" style="background:none; border:none; color:#555; margin-top:15px; cursor:pointer;">No, Thanks!</button>
+        </div>
+    </div>
+
+    <div id="reminder-modal" class="modal-overlay">
+        <div class="modal-box" style="padding: 30px;">
+            <i class="fa-solid fa-circle-info" style="color:var(--brand-red); font-size: 40px; margin-bottom: 15px;"></i>
+            <p style="color:var(--text-light); font-size: 14px; line-height: 1.5;">Please refresh this page and click 'Locate Me' to update your location, or enter your location manually.</p>
+        </div>
+    </div>
+
+    <header class="navbar">
+        <a href="index.html"><img src="sslogo.png" alt="SEEKSEVEEN" style="height:40px;"></a>
+        <nav class="nav-links">
+            <a href="page3.html">Price</a>
+            <a href="page4.html">Shop</a>
+            <a href="help.html">Contact</a>
+        </nav>
+        <i class="fas fa-bars hamburger" onclick="openSidebar()"></i>
+    </header>
+
+    <main>
+        <div class="glass-panel">
+            <h1 style="margin-top:0;">MAP & <span style="color:var(--brand-red)">DIRECTIONS</span></h1>
+            <div class="content-grid">
+                <div class="map-box">
+                    <iframe id="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3984.1444143825023!2d101.6911221!3d3.0545041!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31cc4abb08d3e973%3A0x64700074667d4f8!2sNational%20Stadium%20Bukit%20Jalil!5e0!3m2!1sen!2smy!4v1700000000000" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="info-sidebar">
+                    <label style="font-size:10px; font-weight:bold;">STARTING FROM:</label>
+                    <input type="text" id="start-input" placeholder="Your location...">
+                    <label style="font-size:10px; font-weight:bold; margin-top:5px;">TO:</label>
+                    <input type="text" value="Bukit Jalil National Stadium" readonly style="background: rgba(255,255,255,0.05);">
+                    <button class="btn" onclick="getRoute()">Get Route</button>
+                    <p style="font-size: 10px; color: var(--text-dim); font-style: italic; margin-top: 5px;">*if we failed to locate your location, please type your location manually</p>
+                    
+                    <div style="font-size:11px; font-weight:bold; color:#ffffff; margin-top:25px; border-top:1px solid #333; padding-top:20px;">BOOK TRANSPORTATION</div>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <a href="https://grab.com" target="_blank" class="transport-link"><img src="grab3.png" width="30"><br><span style="font-size:9px;">Grab</span></a>
+                        <a href="https://redbus.my" target="_blank" class="transport-link"><img src="redbus2.png" width="30"><br><span style="font-size:9px;">RedBus</span></a>
+                        <a href="https://malaysiaairlines.com" target="_blank" class="transport-link"><img src="mas2.png" width="30"><br><span style="font-size:9px;">Malaysia Airlines</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="details-container">
+                <div class="details-section">
+                    <h3>1. Address Details</h3>
+                    <p class="highlight-text">Bukit Jalil National Stadium</p>
+                    <p>Jalan Barat, Bukit Jalil,<br>57000 Kuala Lumpur, Wilayah Persekutuan Kuala Lumpur, Malaysia</p>
+                </div>
+
+                <div class="details-section">
+                    <h3>2. Directions & Transportation</h3>
+                    
+                    <h4><i class="fa-solid fa-plane"></i> By Air (from Sabah, Sarawak, Kedah, Perlis, etc.)</h4>
+                    <p>Most attendees flying in will land at <span class="highlight-text">Kuala Lumpur International Airport (KUL)</span>. From there, you can reach the stadium:</p>
+                    <ul>
+                        <li><span class="highlight-text">Train (Fastest public option):</span> Take the KLIA Transit train from KUL to Bandar Tasik Selatan (~40 min). From Bandar Tasik Selatan, transfer to the RapidKL Sri Petaling LRT line toward Bukit Jalil LRT Station (~7 min). Walk ~5–10 minutes to the entrance.</li>
+                        <li><span class="highlight-text">Taxi / Ride-Share:</span> Direct ride from KUL to Bukit Jalil takes ~40 min by car/taxi/ride-share (Grab).</li>
+                        <li><span class="highlight-text">Bus (Budget):</span> Shuttle buses run from KLIA to Terminal Bersepadu Selatan (TBS); then use LRT or local buses.</li>
+                    </ul>
+
+                    <h4><i class="fa-solid fa-train-subway"></i> By Public Transport (within Klang Valley)</h4>
+                    <ul>
+                        <li><span class="highlight-text">LRT (Recommended):</span> RapidKL Sri Petaling Line services <span class="highlight-text">Bukit Jalil LRT Station</span> — just a short (~5–10 min) walk from the stadium.</li>
+                        <li><span class="highlight-text">From KL Sentral:</span> Take the LRT line via Masjid Jamek or transfer routes — total ~25–30 min ride.</li>
+                        <li><span class="highlight-text">Bus Services:</span> Several RapidKL buses such as <span class="highlight-text">T563, T580, 652</span> stop near the Bukit Jalil area.</li>
+                    </ul>
+
+                    <h4><i class="fa-solid fa-car"></i> By Car / Taxi</h4>
+                    <p>Drive via <span class="highlight-text">Maju Expressway (MEX)</span> and local roads toward Bukit Jalil National Stadium. The stadium is well-signposted. Parking is available but fills up early on event days.</p>
+
+                    <h4><i class="fa-solid fa-circle-info"></i> Quick Transit Notes</h4>
+                    <p>From the airport, the train + LRT combination is often faster and more reliable than road transport during peak hours. Public transport often extends service hours during major events.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-links">
+            <a href="terms.html">Terms & Condition</a>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="help.html">Help & Support</a>
+        </div>
+        <p style="color:#777; font-size:11px; margin-top:10px;">© 2026 Und Performance Group. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        function showLocModal() { document.getElementById('loc-modal').style.display = 'flex'; }
+        function closeLoc() { document.getElementById('loc-modal').style.display = 'none'; }
+        
+        function openSidebar() {
+            document.getElementById('mainSidebar').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeSidebar() {
+            document.getElementById('mainSidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function triggerReminder() {
+            const reminder = document.getElementById('reminder-modal');
+            reminder.style.display = 'flex';
+            setTimeout(() => {
+                reminder.style.display = 'none';
+            }, 5000); 
+        }
+
+        function allowLoc() { 
+            if (navigator.geolocation) { 
+                navigator.geolocation.getCurrentPosition((pos) => { 
+                    document.getElementById('start-input').value = "My Current Location"; 
+                    closeLoc(); 
+                }, (err) => {
+                    closeLoc();
+                }); 
+            } else {
+                closeLoc();
+            }
+        }
+        
+        function getRoute() { 
+            const start = document.getElementById('start-input').value; 
+            if(start && start.trim() !== "") {
+                window.open(`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(start)}&destination=National+Stadium+Bukit+Jalil`, '_blank'); 
+            } else {
+                triggerReminder(); 
+            }
+        }
+    </script>
+</body>
+</html>
